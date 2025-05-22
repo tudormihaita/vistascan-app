@@ -59,3 +59,8 @@ class ManageConsultationsUseCase(ABC):
     def get_by_expert_id(self, expert_id: UUID) -> List[ConsultationDTO]:
         """Retrieve all consultations assigned to an expert."""
         ...
+
+    @abstractmethod
+    def generate_draft_report(self, consultation_id: UUID, user_id: UUID) -> Optional[ConsultationDTO]:
+        """Generate a draft report for a consultation and return the updated consultation details."""
+        ...

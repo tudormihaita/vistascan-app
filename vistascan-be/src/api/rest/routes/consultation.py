@@ -10,7 +10,6 @@ from application.dto.consultation_dto import (
     ConsultationDTO,
 )
 from application.interfaces.services import ManageConsultationsUseCase
-from application.services.consultation_service import ConsultationService
 
 from api.rest.dependencies import (
     get_consultation_service,
@@ -27,12 +26,13 @@ async def create_consultation(
         current_user: User = Depends(get_current_user),
         use_case: ManageConsultationsUseCase = Depends(get_consultation_service)
 ):
-    if current_user.role != UserRole.PATIENT:
+    if current_user.role != UserRole.PATIENT and current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only patients can create consultations")
 
+    file_content = await file.read()
     dto = CreateConsultationRequest(
         patient_id=current_user.id,
-        file_data=file.file,
+        file_data=file_content,
         file_name=file.filename,
         content_type=file.content_type or "application/octet-stream",
     )
@@ -54,7 +54,7 @@ async def get_consultation(
     if not result:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Consultation not found")
 
-    if result.patient_id != current_user.id and current_user.role != UserRole.EXPERT:
+    if result.patient_id != current_user.id and current_user.role != UserRole.EXPERT and current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="You do not have permission to access this consultation")
 
@@ -71,7 +71,7 @@ async def get_consultations_by_user(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="You do not have permission to access this patient's consultations")
 
-    if current_user.role == UserRole.PATIENT:
+    if current_user.role == UserRole.PATIENT or current_user.role == UserRole.ADMIN:
         result = use_case.get_by_patient_id(user_id)
     elif current_user.role == UserRole.EXPERT:
         result = use_case.get_by_expert_id(user_id)
@@ -119,7 +119,7 @@ async def assign_consultation(
         current_user: User = Depends(get_current_user),
         use_case: ManageConsultationsUseCase = Depends(get_consultation_service)
 ):
-    if current_user.role != UserRole.ADMIN and current_user.role != UserRole.EXPERT:
+    if current_user.role != UserRole.ADMIN and current_user.role != UserRole.EXPERT and current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized to review consultations")
 
     result = use_case.assign(request)
@@ -136,7 +136,7 @@ async def submit_report(
         current_user: User = Depends(get_current_user),
         use_case: ManageConsultationsUseCase = Depends(get_consultation_service)
 ):
-    if current_user.role != UserRole.EXPERT:
+    if current_user.role != UserRole.EXPERT and current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only experts can submit reports")
 
     result = use_case.annotate(request)
@@ -144,3 +144,30 @@ async def submit_report(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to submit report")
 
     return result
+
+
+@router.post("/{consultation_id}/generate-report", response_model=ConsultationDTO, status_code=status.HTTP_200_OK)
+async def generate_ai_report(
+        consultation_id: UUID,
+        current_user: User = Depends(get_current_user),
+        use_case: ManageConsultationsUseCase = Depends(get_consultation_service)
+):
+    """
+    Generate an AI report for a consultation
+    """
+    if current_user.role != UserRole.EXPERT and current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only experts can generate AI reports")
+
+    try:
+        result = await use_case.generate_draft_report(consultation_id, current_user.id)
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to generate AI report"
+            )
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error generating AI report: {str(e)}"
+        )

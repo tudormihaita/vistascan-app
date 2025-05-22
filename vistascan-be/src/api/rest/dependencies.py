@@ -18,6 +18,7 @@ from infrastructure.storage.minio_storage import MinioStorageService
 from infrastructure.security.jwt_token_generator import JWTTokenGenerator
 from infrastructure.security.bcrypt_password_hasher import BcryptPasswordHasher
 from infrastructure.persistence.mongo.user_repository import MongoUserRepository
+from infrastructure.model.model_service import ModelServiceClient
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -27,11 +28,12 @@ _consultation_repository: Optional[ConsultationRepository] = None
 _auth_service: Optional[UserAuthenticationUseCase] = None
 _consultation_service: Optional[ManageConsultationsUseCase] = None
 _file_storage_service: Optional[FileStorageService] = None
+_model_service_client: Optional[ModelServiceClient] = None
 
 _password_hasher = BcryptPasswordHasher()
 _token_generator = JWTTokenGenerator(
     secret_key=settings.jwt_secret,
-    expires_in=settings.jwt_expires_in,
+    expires_in=settings.jwt_expiration,
 )
 
 
@@ -78,11 +80,22 @@ def get_file_storage_service() -> FileStorageService:
             endpoint=settings.minio_endpoint,
             access_key=settings.minio_access_key,
             secret_key=settings.minio_secret_key,
-            bucket_name=settings.minio_bucket_name,
+            bucket_name=settings.minio_bucket,
             secure=settings.minio_secure
         )
 
     return _file_storage_service
+
+def get_model_service_client() -> ModelServiceClient:
+    global _model_service_client
+    if _model_service_client is None:
+        model_service_url = getattr(settings, 'model_service_url', 'http://localhost:8001')
+        _model_service_client = ModelServiceClient(
+            base_url=model_service_url,
+            timeout=30
+        )
+
+    return _model_service_client
 
 
 def get_consultation_service() -> ConsultationService:
@@ -91,11 +104,13 @@ def get_consultation_service() -> ConsultationService:
         _user_repo = get_user_repository()
         _consultation_repo = get_consultation_repository()
         _storage_service = get_file_storage_service()
+        _model_client = get_model_service_client()
 
         _consultation_service = ConsultationService(
             user_repository=_user_repo,
             consultation_repository=_consultation_repo,
-            file_storage_service=_storage_service
+            file_storage_service=_storage_service,
+            model_client=_model_client,
         )
 
     return _consultation_service

@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional, BinaryIO
 from pydantic import BaseModel
 from uuid import UUID
+import io
 
 from domain.entities.consultation import ConsultationStatus
 
@@ -23,9 +24,12 @@ class ReportDTO(BaseModel):
 
 class CreateConsultationRequest(BaseModel):
     patient_id: UUID
-    file_data: BinaryIO
+    file_data: bytes
     file_name: str
     content_type: str
+
+    def get_file_object(self) -> BinaryIO:
+        return io.BytesIO(self.file_data)
 
 
 class AssignConsultationRequest(BaseModel):

@@ -10,3 +10,10 @@ class Report:
     created_at: datetime
     expert_id: UUID
     consultation_id: UUID
+
+@dataclass
+class ReportGenerationResult:
+    """Entity representing the result of a report generation process."""
+    report: str
+    success: bool
+    message: str = ""

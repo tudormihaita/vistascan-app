@@ -9,8 +9,8 @@ class Settings:
     app_name: str = os.getenv("APP_NAME", "Vistascan API")
     app_version: str = os.getenv("APP_VERSION", "0.1.0")
 
-    mongodb_uri: str = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-    mongodb_db: str = os.getenv("MONGO_DB", "vistascan_dev")
+    db_uri: str = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+    db_name: str = os.getenv("MONGO_DB", "vistascan_dev")
 
     jwt_secret: str = os.getenv("JWT_SECRET")
     jwt_algorithm: str = os.getenv("JWT_ALGORITHM", "HS256")
@@ -19,8 +19,10 @@ class Settings:
     minio_endpoint: str = os.getenv("MINIO_ENDPOINT", "localhost:9000")
     minio_access_key: str = os.getenv("MINIO_ACCESS_KEY")
     minio_secret_key: str = os.getenv("MINIO_SECRET_KEY")
-    minio_bucket: str = os.getenv("MINIO_BUCKET", "vistascan_studies")
+    minio_bucket: str = os.getenv("MINIO_BUCKET", "vistascan-studies")
     minio_secure: bool = os.getenv("MINIO_SECURE", "False").lower() == "true"
+
+    model_service_url: str = os.getenv("MODEL_SERVICE_URL", "http://localhost:8001")
 
     cors_origins: list = os.getenv("CORS_ORIGINS", "*").split(",")
 

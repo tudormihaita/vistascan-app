@@ -4,6 +4,7 @@ from domain.entities.user import UserRole, Gender
 
 
 class UserDTO(BaseModel):
+    id: str
     username: str
     email: EmailStr
     full_name: str

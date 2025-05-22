@@ -47,6 +47,7 @@ class AuthService(UserAuthenticationUseCase):
         access_token = self._token_generator.generate(user.id, user.role.value)
         return RegisterResponse(
             user=UserDTO(
+                id=str(saved_user.id),
                 username=user.username,
                 email=user.email,
                 full_name=user.full_name,
@@ -65,6 +66,7 @@ class AuthService(UserAuthenticationUseCase):
         access_token = self._token_generator.generate(user.id, user.role)
         return AuthResponse(
             user=UserDTO(
+                id=str(user.id),
                 username=user.username,
                 email=user.email,
                 full_name=user.full_name,

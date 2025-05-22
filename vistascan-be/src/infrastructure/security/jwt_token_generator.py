@@ -9,7 +9,7 @@ class JWTTokenGenerator(TokenGenerator):
             self,
             secret_key: str,
             algorithm: str = "HS256",
-            expires_in: timedelta = timedelta(minutes=30),
+            expires_in: int = 1800,
     ):
         self._secret = secret_key
         self._alg = algorithm
@@ -21,6 +21,6 @@ class JWTTokenGenerator(TokenGenerator):
             "sub": str(user_id),
             "role": role,
             "iat": time,
-            "exp": time + self._expires_in,
+            "exp": (time + timedelta(seconds=self._expires_in)).timestamp(),
         }
         return jwt.encode(payload, self._secret, algorithm=self._alg)

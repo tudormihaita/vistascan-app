@@ -3,7 +3,7 @@ from datetime import timedelta
 
 import minio
 import logging
-from uuid import UUID
+from uuid import UUID, uuid4
 from typing import Optional, Tuple, BinaryIO
 
 from minio.error import MinioException
@@ -42,7 +42,9 @@ class MinioStorageService(FileStorageService):
 
     def upload(self, data: BinaryIO, filename: str, content_type: str, user_id: UUID) -> Tuple[str, int]:
         try:
-            object_name = f"{user_id}/{UUID()}-{filename}"
+            user_id_str = str(user_id)
+            object_uuid = str(uuid4())
+            object_name = f"{user_id_str}/{object_uuid}-{filename}"
 
             data.seek(0, io.SEEK_END)
             size = data.tell()

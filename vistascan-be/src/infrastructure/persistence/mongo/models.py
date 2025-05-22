@@ -32,7 +32,7 @@ class ImagingStudyDocument(me.EmbeddedDocument):
 
 
 class ReportDocument(me.EmbeddedDocument):
-    content: me.StringField(required=True)
+    content = me.StringField(required=True)
     created_at = me.DateTimeField(required=True)
     expert_id = me.StringField(required=True)
     consultation_id = me.StringField(required=True)

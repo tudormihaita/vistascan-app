@@ -89,7 +89,7 @@ def get_file_storage_service() -> FileStorageService:
 def get_model_service_client() -> ModelServiceClient:
     global _model_service_client
     if _model_service_client is None:
-        model_service_url = getattr(settings, 'model_service_url', 'http://localhost:8001')
+        model_service_url = settings.model_service_url
         _model_service_client = ModelServiceClient(
             base_url=model_service_url,
             timeout=30

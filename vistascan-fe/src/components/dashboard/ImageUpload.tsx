@@ -1,16 +1,20 @@
 import React, {useState} from 'react';
-import {useConsultationStore} from '../../store/consultationStore';
 import {Alert, Card, message, Modal, Upload, Button} from "antd";
 import {InboxOutlined, CloudUploadOutlined} from '@ant-design/icons';
+import {LocalStorageKeys} from "../../types/enums/LocalStorageKeys.ts";
+import {usePatientConsultations} from "../../hooks/usePatientConsultations.ts";
 
 const {Dragger} = Upload;
 
 const ImageUpload: React.FC = () => {
+    const userId = localStorage.getItem(LocalStorageKeys.USER_ID) || '';
+
     const [fileList, setFileList] = useState<any[]>([]);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [previewVisible, setPreviewVisible] = useState<boolean>(false);
 
-    const {createConsultation, isLoading, error} = useConsultationStore();
+    const { submitConsultation, isLoading, error } = usePatientConsultations(userId);
+
 
     const uploadProps = {
         name: 'file',
@@ -55,7 +59,7 @@ const ImageUpload: React.FC = () => {
         }
 
         try {
-            const result = await createConsultation(fileList[0]);
+            const result = await submitConsultation(fileList[0]);
             if (result) {
                 message.success('Consultation created successfully!');
                 setFileList([]);
@@ -73,7 +77,7 @@ const ImageUpload: React.FC = () => {
             {error && (
                 <Alert
                     message="Upload Error"
-                    description={error}
+                    description={(error as any)?.data?.message || 'Failed to upload file'}
                     type="error"
                     className="mb-4"
                     showIcon
@@ -86,7 +90,7 @@ const ImageUpload: React.FC = () => {
                 </p>
                 <p className="ant-upload-text">Click or drag file to this area to upload</p>
                 <p className="ant-upload-hint">
-                    Support for PNG, JPG, or DICOM files up to 10MB
+                    Support for PNG or JPG files up to 10MB
                 </p>
             </Dragger>
 
@@ -107,7 +111,7 @@ const ImageUpload: React.FC = () => {
             )}
 
             <Modal
-                visible={previewVisible}
+                open={previewVisible}
                 title={fileList[0]?.name}
                 footer={null}
                 onCancel={() => setPreviewVisible(false)}

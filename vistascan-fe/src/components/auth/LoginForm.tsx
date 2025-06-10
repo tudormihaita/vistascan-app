@@ -1,31 +1,35 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox, Alert } from 'antd';
+import { Form, Input, Button, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
+import {useLoginUserMutation} from "../../api/authApi.ts";
+import {AppRoutes} from "../../types/constants/AppRoutes.ts";
 
 const LoginForm: React.FC = () => {
   const [form] = Form.useForm();
-  const { login, isLoading, error } = useAuthStore();
+  const [login, { isLoading } ] = useLoginUserMutation();
   const navigate = useNavigate();
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showError, setShowError] = useState(false);
 
-  const onFinish = async (values: { username: string; password: string; remember: boolean }) => {
-    try {
-      const { username, password } = values;
-      await login({ username, password });
-      navigate('/dashboard');
-    } catch (err) {
-      setShowError(true);
-    }
+  const handleOnFormSubmit = async (values: { username: string; password: string }) => {
+    login({ username: values.username, password: values.password }).unwrap()
+        .then(() => {
+          navigate(AppRoutes.DASHBOARD_PAGE);
+        })
+        .catch((err: any) => {
+            setErrorMessage(err?.data?.message || 'An error occurred during login. Please try again.');
+            setShowError(true);
+        })
   };
 
   return (
     <>
-      {error && showError && (
+      {showError && (
         <Alert
           message="Login Error"
-          description={error}
+          description={errorMessage || 'An error occurred during login. Please try again.'}
           type="error"
           closable
           className="mb-4"
@@ -37,7 +41,7 @@ const LoginForm: React.FC = () => {
         form={form}
         name="login"
         initialValues={{ remember: true }}
-        onFinish={onFinish}
+        onFinish={handleOnFormSubmit}
         size="large"
         layout="vertical"
         style={{ width: '100%' }}
@@ -66,10 +70,6 @@ const LoginForm: React.FC = () => {
 
         <Form.Item>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
-
             <a style={{ color: '#1890ff' }} href="">
               Forgot password
             </a>

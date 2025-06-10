@@ -1,16 +1,25 @@
 import React, {useState} from 'react';
-import {useConsultationStore} from '../../store/consultationStore';
 import {Consultation, ConsultationStatus} from '../../types/consultation.types';
 import {Card, Descriptions, Divider, Modal, Spin, Table, Image, Tag, Button, Typography} from "antd";
 import { EyeOutlined, DownloadOutlined } from '@ant-design/icons';
+import {usePatientConsultations} from "../../hooks/usePatientConsultations.ts";
+import {LocalStorageKeys} from "../../types/enums/LocalStorageKeys.ts";
+import {useConsultationDetail} from "../../hooks/useConsultationDetail.ts";
 
 const { Title, Text } = Typography;
 
 const ConsultationList: React.FC = () => {
-    const {consultations, isLoading, fetchConsultationById} = useConsultationStore();
-    const [selectedConsultation, setSelectedConsultation] = useState<Consultation | null>(null);
+    const userId = localStorage.getItem(LocalStorageKeys.USER_ID) || '';
+    const { consultations, isLoading } = usePatientConsultations(userId);
+
+    const [selectedConsultationId, setSelectedConsultationId] = useState<string | undefined>();
     const [detailVisible, setDetailVisible] = useState<boolean>(false);
-    const [imageLoading, setImageLoading] = useState<boolean>(false);
+
+    const {
+        consultation: selectedConsultation,
+        downloadUrl,
+        isLoading: isLoadingDetail
+    } = useConsultationDetail(detailVisible ? selectedConsultationId : undefined);
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -31,12 +40,14 @@ const ConsultationList: React.FC = () => {
     };
 
     const handleViewConsultation = async (consultation: Consultation) => {
-        setSelectedConsultation(consultation);
-        if (consultation.id) {
-            await fetchConsultationById(consultation.id);
-        }
+        setSelectedConsultationId(consultation.id);
         setDetailVisible(true);
     };
+
+    const handleCloseModal = () => {
+        setDetailVisible(false);
+        setSelectedConsultationId(undefined);
+    }
 
     const columns = [
         {
@@ -77,119 +88,83 @@ const ConsultationList: React.FC = () => {
         },
     ];
 
-
     return (
-        <Card title="Your Consultations">
+        <div>
+            <Title level={3}>My Consultations</Title>
             <Table
-                dataSource={consultations}
                 columns={columns}
+                dataSource={consultations}
                 rowKey="id"
-                loading={isLoading && consultations.length === 0}
-                locale={{
-                    emptyText: 'No consultations found. Upload an imaging study to create a new consultation.'
-                }}
+                loading={isLoading}
+                pagination={{ pageSize: 10 }}
             />
 
             <Modal
                 title="Consultation Details"
-                visible={detailVisible}
-                onCancel={() => setDetailVisible(false)}
-                width={900}
-                footer={[
-                    <Button key="close" onClick={() => setDetailVisible(false)}>
-                        Close
-                    </Button>
-                ]}
+                open={detailVisible}
+                onCancel={handleCloseModal}
+                footer={null}
+                width={800}
             >
-                {selectedConsultation && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <Descriptions title="Imaging Study" bordered column={1} size="small">
-                                <Descriptions.Item label="File Name">
-                                    {selectedConsultation.imaging_study.file_name}
-                                </Descriptions.Item>
-                                <Descriptions.Item label="Content Type">
-                                    {selectedConsultation.imaging_study.content_type}
-                                </Descriptions.Item>
-                                <Descriptions.Item label="Size">
-                                    {Math.round(selectedConsultation.imaging_study.size / 1024)} KB
-                                </Descriptions.Item>
-                                <Descriptions.Item label="Upload Date">
-                                    {formatDate(selectedConsultation.imaging_study.upload_date)}
-                                </Descriptions.Item>
-                                <Descriptions.Item label="Status">
-                                    {getStatusTag(selectedConsultation.status)}
-                                </Descriptions.Item>
-                            </Descriptions>
-
-                            {selectedConsultation.expert_id && (
-                                <>
-                                    <Divider/>
-                                    <Descriptions title="Expert" bordered column={1} size="small">
-                                        <Descriptions.Item label="Expert ID">
-                                            {selectedConsultation.expert_id}
-                                        </Descriptions.Item>
-                                    </Descriptions>
-                                </>
-                            )}
-
-                            {selectedConsultation.report && (
-                                <>
-                                    <Divider/>
-                                    <Title level={5}>Report</Title>
-                                    <Card size="small">
-                                        <Text>{selectedConsultation.report.content}</Text>
-                                        <div className="mt-2">
-                                            <Text type="secondary">
-                                                Created: {formatDate(selectedConsultation.report.created_at)}
-                                            </Text>
-                                        </div>
-                                    </Card>
-                                </>
-                            )}
-                        </div>
-
-                        <div>
-                            <Title level={5}>Image Preview</Title>
-                            {selectedConsultation.download_url ? (
-                                <div>
-                                    <div className="relative">
-                                        {imageLoading && (
-                                            <div
-                                                className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-                                                <Spin/>
-                                            </div>
-                                        )}
-                                        <Image
-                                            src={selectedConsultation.download_url}
-                                            alt="Imaging study"
-                                            className="rounded-md"
-                                            onLoad={() => setImageLoading(false)}
-                                            onError={() => setImageLoading(false)}
-                                            placeholder={true}
-                                        />
-                                    </div>
-                                    <div className="mt-4 flex justify-end">
-                                        <Button
-                                            type="primary"
-                                            icon={<DownloadOutlined/>}
-                                            href={selectedConsultation.download_url}
-                                            target="_blank"
-                                        >
-                                            Open Original
-                                        </Button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="bg-gray-100 rounded-md p-8 text-center">
-                                    <Text type="secondary">No preview available</Text>
-                                </div>
-                            )}
-                        </div>
+                {isLoadingDetail ? (
+                    <div style={{ textAlign: 'center', padding: '50px' }}>
+                        <Spin size="large" />
                     </div>
-                )}
+                ) : selectedConsultation ? (
+                    <div>
+                        <Descriptions bordered size="small" column={2}>
+                            <Descriptions.Item label="ID" span={2}>
+                                {selectedConsultation.id}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Status">
+                                {getStatusTag(selectedConsultation.status)}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Created">
+                                {formatDate(selectedConsultation.created_at)}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="File Name">
+                                {selectedConsultation.imaging_study?.file_name}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="File Size">
+                                {selectedConsultation.imaging_study?.size
+                                    ? `${(selectedConsultation.imaging_study.size / 1024 / 1024).toFixed(2)} MB`
+                                    : 'N/A'
+                                }
+                            </Descriptions.Item>
+                        </Descriptions>
+
+                        <Divider />
+
+                        {downloadUrl && (
+                            <Card title="Medical Image" size="small" style={{ marginBottom: 16 }}>
+                                <Image
+                                    width="100%"
+                                    src={downloadUrl}
+                                    placeholder={<Spin />}
+                                />
+                                <Button
+                                    icon={<DownloadOutlined />}
+                                    style={{ marginTop: 8 }}
+                                    onClick={() => window.open(downloadUrl, '_blank')}
+                                >
+                                    Download Image
+                                </Button>
+                            </Card>
+                        )}
+
+                        {selectedConsultation.report && (
+                            <Card title="Medical Report" size="small">
+                                <Text>{selectedConsultation.report.content}</Text>
+                                <Divider />
+                                <Text type="secondary">
+                                    Report created: {formatDate(selectedConsultation.report.created_at)}
+                                </Text>
+                            </Card>
+                        )}
+                    </div>
+                ) : null}
             </Modal>
-        </Card>
+        </div>
     );
 };
 

@@ -1,15 +1,8 @@
 import React from 'react';
-import { Navigate, Link } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { Link } from 'react-router-dom';
 import LoginForm from '../components/auth/LoginForm';
 
 const LoginPage: React.FC = () => {
-  const { isAuthenticated } = useAuthStore();
-
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">

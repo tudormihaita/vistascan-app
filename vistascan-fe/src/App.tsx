@@ -1,27 +1,33 @@
-import React, {useEffect} from 'react';
-import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import React from "react";
+import {
+    Route,
+    Navigate,
+    createBrowserRouter,
+    createRoutesFromElements, RouterProvider
+} from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
-import {useAuthStore} from "./store/authStore.ts";
+import {AppRoutes} from "./types/constants/AppRoutes.ts";
+
+const appRouter = createBrowserRouter(
+    createRoutesFromElements(
+        <>
+            <Route path={AppRoutes.LOGIN_PAGE} element={<LoginPage />} />
+            <Route path={AppRoutes.NOT_FOUND_FORBIDDEN_PAGE} element={<NotFoundPage />} />
+
+            <Route path={AppRoutes.DASHBOARD_PAGE} element={<DashboardPage />} />
+            <Route path='/' element={<Navigate to={AppRoutes.DASHBOARD_PAGE} replace />} />
+        </>
+    )
+);
 
 const App: React.FC = () => {
-    const {initAuth} = useAuthStore();
-
-    useEffect(() => {
-        initAuth();
-    }, [initAuth]);
-
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace/>}/>
-                <Route path="/login" element={<LoginPage/>}/>
-                <Route path="/dashboard" element={<DashboardPage/>}/>
-                <Route path="*" element={<NotFoundPage/>}/>
-            </Routes>
-        </Router>
-    );
+        <div className="App">
+            <RouterProvider router={appRouter} />
+        </div>
+    )
 };
 
 export default App;

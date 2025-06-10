@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Table,
     Tag,
@@ -24,8 +24,9 @@ import {
   SendOutlined
 } from '@ant-design/icons';
 import {Consultation, ConsultationStatus} from "../types/consultation.types.ts";
-import { useConsultationStore } from '../store/consultationStore.ts';
-import {useAuthStore} from "../store/authStore.ts";
+import {LocalStorageKeys} from "../types/enums/LocalStorageKeys.ts";
+import {useExpertConsultations} from "../hooks/useExpertConsultations.ts";
+import {useConsultationDetail} from "../hooks/useConsultationDetail.ts";
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -35,27 +36,27 @@ interface ExpertConsultationsProps {
 }
 
 const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => {
-  const { user } = useAuthStore();
+  const userId = localStorage.getItem(LocalStorageKeys.USER_ID) || '';
   const {
-    consultations,
-    isLoading,
-    fetchConsultationsByUserId,
-    fetchConsultationById,
-    assignConsultation,
-    generateDraftReport,
-    submitReport,
-  } = useConsultationStore();
+      consultations,
+      isLoading,
+      assignConsultation,
+      generateDraftReport,
+      submitReport,
+  } = useExpertConsultations(userId);
 
-  const [selectedConsultation, setSelectedConsultation] = useState<Consultation | null>(null);
+  const [selectedConsultationId, setSelectedConsultationId] = useState<string | undefined>(undefined);
   const [detailVisible, setDetailVisible] = useState<boolean>(false);
   const [reportModalVisible, setReportModalVisible] = useState<boolean>(false);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const [isGeneratingReport, setIsGeneratingReport] = useState<boolean>(false);
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    fetchConsultationsByUserId(user?.id || '');
-  }, [status]);
+   const {
+        consultation: selectedConsultation,
+        downloadUrl,
+        isLoading: isLoadingDetail
+    } = useConsultationDetail(detailVisible ? selectedConsultationId : undefined);
 
   const filteredConsultations = status
     ? consultations.filter(c => c.status === status)
@@ -80,23 +81,19 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
   };
 
   const handleViewConsultation = async (consultation: Consultation) => {
-    setSelectedConsultation(consultation);
-    if (consultation.id) {
-      await fetchConsultationById(consultation.id);
-    }
+    setSelectedConsultationId(consultation?.id || undefined);
     setDetailVisible(true);
   };
 
   const handleAssignToMe = async (consultation: Consultation) => {
-    if (!user?.id || !consultation.id) return;
+    if (!userId || !consultation.id) return;
 
     try {
       await assignConsultation({
         consultation_id: consultation.id,
-        expert_id: user.id
+        expert_id: userId
       });
       message.success('Consultation assigned to you successfully');
-      fetchConsultationsByUserId(user.id);
     } catch (error) {
       message.error('Failed to assign consultation');
     }
@@ -106,16 +103,16 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
     try {
       const values = await form.validateFields();
 
-      if (selectedConsultation?.id && user?.id) {
+      if (selectedConsultation?.id && userId) {
         await submitReport({
           consultation_id: selectedConsultation.id,
           content: values.report,
-          expert_id: user.id
+          expert_id: userId
         });
 
         message.success('Report submitted successfully');
         setReportModalVisible(false);
-        fetchConsultationsByUserId(user.id);
+        form.resetFields();
       }
     } catch (error) {
       message.error('Failed to submit report');
@@ -137,8 +134,6 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
         form.setFieldsValue({
           report: updatedConsultation.report.content
         });
-
-        setSelectedConsultation(updatedConsultation);
 
         message.success('Draft report generated successfully! You can review and edit it before submitting.');
       } else {
@@ -212,12 +207,12 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
             </Button>
           )}
 
-          {record.status === ConsultationStatus.IN_REVIEW && record.expert_id === user?.id && (
+          {record.status === ConsultationStatus.IN_REVIEW && record.expert_id === userId && (
             <Button
               type="link"
               icon={<EditOutlined />}
               onClick={() => {
-                setSelectedConsultation(record);
+                setSelectedConsultationId(record?.id || undefined);
                 setReportModalVisible(true);
               }}
             >
@@ -247,7 +242,7 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
 
       <Modal
         title="Consultation Details"
-        visible={detailVisible}
+        open={detailVisible}
         onCancel={() => setDetailVisible(false)}
         width={900}
         footer={[
@@ -256,7 +251,11 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
           </Button>
         ]}
       >
-        {selectedConsultation && (
+        {isLoadingDetail ? (
+            <div style={{ textAlign: 'center' , padding: '50px' }}>
+                <Spin size="large" />
+            </div>
+        ) : selectedConsultation && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Descriptions title="Imaging Study" bordered column={1} size="small">
@@ -308,7 +307,7 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
               )}
 
               {selectedConsultation.status === ConsultationStatus.IN_REVIEW &&
-                selectedConsultation.expert_id === user?.id && !selectedConsultation.report && (
+                selectedConsultation.expert_id === userId && !selectedConsultation.report && (
                 <div className="mt-4">
                   <Button
                     type="primary"
@@ -323,7 +322,7 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
 
             <div>
               <Title level={5}>Image Preview</Title>
-              {selectedConsultation.download_url ? (
+              {downloadUrl ? (
                 <div>
                   <div className="relative">
                     {imageLoading && (
@@ -332,7 +331,7 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
                       </div>
                     )}
                     <Image
-                      src={selectedConsultation.download_url}
+                      src={downloadUrl}
                       alt="Imaging study"
                       className="rounded-md"
                       onLoad={() => setImageLoading(false)}
@@ -345,7 +344,7 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
                     <Button
                       type="primary"
                       icon={<DownloadOutlined />}
-                      href={selectedConsultation.download_url}
+                      href={downloadUrl}
                       target="_blank"
                     >
                       Open Original
@@ -364,7 +363,7 @@ const ExpertConsultations: React.FC<ExpertConsultationsProps> = ({ status }) => 
 
       <Modal
         title="Write Report"
-        visible={reportModalVisible}
+        open={reportModalVisible}
         onCancel={() => setReportModalVisible(false)}
         width={700}
         footer={[

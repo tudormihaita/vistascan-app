@@ -14,19 +14,21 @@ const ProtectedRoute = (props: ProtectedRouteProps) => {
     const userId = localStorage.getItem(LocalStorageKeys.USER_ID);
     const authToken = getDecodedJwtToken(localStorage.getItem(LocalStorageKeys.USER_TOKEN) || '');
 
-    if (!userRole || !userId || !authToken) {
-        return <Navigate to={AppRoutes.LOGIN_PAGE} />;
+    const isAuthenticated = !!userRole && !!userId && !!authToken;
+
+    if (!isAuthenticated) {
+        return <Navigate to={AppRoutes.LOGIN} />;
     }
 
     if (authToken.exp && authToken.exp * 1000 < Date.now()) {
         clearAuthenticationData();
-        return <Navigate to={AppRoutes.LOGIN_PAGE} />;
+        return <Navigate to={AppRoutes.LOGIN} />;
     }
 
     if (roles.includes(userRole as keyof typeof UserRole)) {
         return <Outlet />;
     }
-    return <Navigate to={AppRoutes.NOT_FOUND_FORBIDDEN_PAGE} />;
+    return <Navigate to={AppRoutes.NOT_FOUND} />;
 }
 
 export default ProtectedRoute;

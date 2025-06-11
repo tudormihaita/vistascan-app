@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Alert, Card, Col, Row, Statistic, Typography, Button, Modal, Tabs } from 'antd';
 import {
     AreaChartOutlined,
@@ -8,21 +8,18 @@ import {
     UserOutlined,
     CloudUploadOutlined,
 } from '@ant-design/icons';
-import ImageUpload from './ImageUpload';
 import RegisterForm from '../auth/RegisterForm';
-import UserManagement from '../admin/UserManagement';
-import { ConsultationStatus } from '../../types/consultation.types';
-import { useGetConsultationsByUserIdQuery } from "../../api/consultationApi.ts";
-import ConsultationsManagement from "../admin/ConsultationsManagement.tsx";
+import UserList from '../admin/UserList.tsx';
+import { useGetAllConsultationsQuery } from "../../api/adminApi";
+import PatientStudyUpload from "../consultation/PatientStudyUpload";
+import ConsultationManager from "../consultation/ConsultationManager";
+import {ConsultationStatus} from "../../types/dtos/ConsultationDto.ts";
+import {UserRole} from "../../types/dtos/UserDto.ts";
 
 const { Title } = Typography;
 
-interface AdminDashboardProps {
-    userId: string;
-}
-
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ userId }) => {
-    const { data: consultations = [] } = useGetConsultationsByUserIdQuery(userId);
+const AdminDashboard = () => {
+    const { data: consultations = [], isLoading, refetch } = useGetAllConsultationsQuery();
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
 
     const showRegisterModal = () => {
@@ -50,33 +47,41 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userId }) => {
             label: (
                 <span>
                     <FileDoneOutlined />
-                    Consultation Management
+                    Consultations
                 </span>
             ),
-            children: <ConsultationsManagement />,
+            children: (
+                <ConsultationManager
+                    consultations={consultations}
+                    isLoading={isLoading}
+                    userRole={UserRole.ADMIN}
+                    title="Manage Consultations"
+                    onRefetch={refetch}
+                />
+            ),
         },
         {
             key: 'users',
             label: (
                 <span>
                     <UserOutlined />
-                    User Management
+                    Users
                 </span>
             ),
-            children: <UserManagement />,
+            children: <UserList />,
         },
         {
             key: 'upload',
             label: (
                 <span>
                     <CloudUploadOutlined />
-                    File Upload
+                    Study Upload
                 </span>
             ),
             children: (
                 <Row gutter={16}>
                     <Col xs={24} lg={12}>
-                        <ImageUpload />
+                        <PatientStudyUpload />
                     </Col>
                     <Col xs={24} lg={12}>
                         <Card title="Upload Guidelines" style={{ height: '100%' }}>
@@ -163,7 +168,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userId }) => {
 
             <Alert
                 message="Admin Dashboard"
-                description="As an administrator, you can manage all aspects of the platform including user registration, consultation oversight, and file uploads."
+                description="As an administrator, you have full expert capabilities plus administrative oversight. You can assign consultations to yourself, generate AI reports, manage users, and oversee the entire platform."
                 type="info"
                 showIcon
                 style={{ marginBottom: '24px' }}

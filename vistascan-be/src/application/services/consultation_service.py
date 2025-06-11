@@ -333,9 +333,56 @@ class ConsultationService(ManageConsultationsUseCase):
 
         return consultation_dtos
 
+    def get_by_status(self, status: ConsultationStatus) -> List[ConsultationDTO]:
+        try:
+            consultations = self._repo.find_by_status(status)
+            result = []
+
+            for consultation in consultations:
+
+                download_url = self._storage.get_download_url(consultation.imaging_study.file_path)
+
+                imaging_study_dto = ImagingStudyDTO(
+                    file_path=consultation.imaging_study.file_path,
+                    file_name=consultation.imaging_study.file_name,
+                    content_type=consultation.imaging_study.content_type,
+                    size=consultation.imaging_study.size,
+                    upload_date=consultation.imaging_study.upload_date,
+                )
+
+                report_dto = None
+                if consultation.report:
+                    report = consultation.report
+                    report_dto = ReportDTO(
+                        content=report.content,
+                        created_at=report.created_at,
+                        expert_id=report.expert_id,
+                        consultation_id=report.consultation_id
+                    )
+
+                consultation_dto = ConsultationDTO(
+                    id=consultation.id,
+                    patient_id=consultation.patient_id,
+                    imaging_study=imaging_study_dto,
+                    status=consultation.status,
+                    created_at=consultation.created_at,
+                    expert_id=str(consultation.expert_id),
+                    completed_at=consultation.completed_at,
+                    download_url=download_url,
+                    report=report_dto,
+                )
+
+                result.append(consultation_dto)
+
+            return result
+
+        except Exception as e:
+            logging.error(f"Error retrieving consultations by status {status}: {e}")
+            return []
+
     async def generate_draft_report(self, consultation_id: UUID, user_id: UUID) -> Optional[ConsultationDTO]:
         """
-        Generate a draft automated report for a consultation using the CLIP-XRGen model.
+        Generate a draft automated report for a consultation using the integrated AI model.
         """
         consultation = self._repo.find_by_id(consultation_id)
         if not consultation:

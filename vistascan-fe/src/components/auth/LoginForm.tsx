@@ -16,7 +16,7 @@ const LoginForm: React.FC = () => {
   const handleOnFormSubmit = async (values: { username: string; password: string }) => {
     login({ username: values.username, password: values.password }).unwrap()
         .then(() => {
-          navigate(AppRoutes.DASHBOARD_PAGE);
+          navigate(AppRoutes.DASHBOARD);
         })
         .catch((err: any) => {
             setErrorMessage(err?.data?.message || 'An error occurred during login. Please try again.');

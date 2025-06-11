@@ -25,6 +25,19 @@ class MongoConsultationRepository(ConsultationRepository):
             logging.error(f"Error saving consultation {consultation.id}: {e}")
             return None
 
+    def delete_by_id(self, consultation_id: UUID) -> bool:
+        try:
+            consultation_doc = ConsultationDocument.objects.get(id=str(consultation_id))
+            consultation_doc.delete()
+            logging.info(f"Deleted consultation {consultation_id}")
+            return True
+        except me.DoesNotExist:
+            logging.warning(f"Consultation with ID {consultation_id} not found.")
+            return False
+        except Exception as e:
+            logging.error(f"Error deleting consultation {consultation_id}: {e}")
+            return False
+
     def find_by_id(self, consultation_id: UUID) -> Optional[Consultation]:
         try:
             consultation_doc = ConsultationDocument.objects.get(id=str(consultation_id))
@@ -59,6 +72,14 @@ class MongoConsultationRepository(ConsultationRepository):
 
         except me.DoesNotExist:
             logging.warning(f"No consultations found for expert ID {expert_id}.")
+            return []
+
+    def find_all(self) -> List[Consultation]:
+        try:
+            consultations = ConsultationDocument.objects.all()
+            return [self._doc_to_entity(consultation) for consultation in consultations]
+        except Exception as e:
+            logging.error(f"Error fetching all consultations: {e}")
             return []
 
     @staticmethod

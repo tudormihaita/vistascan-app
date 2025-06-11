@@ -6,7 +6,7 @@ from application.dto.user_dto import (
     AuthUserRequest,
     AuthResponse,
     RegisterUserRequest,
-    RegisterResponse,
+    RegisterResponse, UserDTO, UpdateUserRequest,
 )
 from application.dto.consultation_dto import (
     CreateConsultationRequest,
@@ -46,6 +46,11 @@ class ManageConsultationsUseCase(ABC):
         ...
 
     @abstractmethod
+    def get_by_status(self, status: str) -> List[ConsultationDTO]:
+        """Retrieve consultations by their status."""
+        ...
+
+    @abstractmethod
     def get_by_id(self, consultation_id: UUID) -> Optional[ConsultationDTO]:
         """Retrieve a consultation by its ID."""
         ...
@@ -63,4 +68,32 @@ class ManageConsultationsUseCase(ABC):
     @abstractmethod
     def generate_draft_report(self, consultation_id: UUID, user_id: UUID) -> Optional[ConsultationDTO]:
         """Generate a draft report for a consultation and return the updated consultation details."""
+        ...
+
+class AdminManagementUseCase(ABC):
+    """Interface for admin management operations."""
+
+    @abstractmethod
+    def get_all_users(self) -> List[UserDTO]:
+        """Retrieve all users in the system."""
+        ...
+
+    @abstractmethod
+    def get_all_consultations(self) -> List[ConsultationDTO]:
+        """Get all consultations in the system."""
+        ...
+
+    @abstractmethod
+    def update_user(self, user_id: UUID, update_data: UpdateUserRequest) -> Optional[UserDTO]:
+        """Update a user's information."""
+        ...
+
+    @abstractmethod
+    def delete_user(self, user_id: UUID) -> bool:
+        """Delete a user from the system."""
+        ...
+
+    @abstractmethod
+    def delete_consultation(self, consultation_id: UUID) -> bool:
+        """Delete a consultation from the system."""
         ...

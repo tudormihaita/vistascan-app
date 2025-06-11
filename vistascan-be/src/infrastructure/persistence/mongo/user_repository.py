@@ -1,6 +1,6 @@
 import logging
 import mongoengine as me
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 from pymongo import MongoClient
 
@@ -11,14 +11,9 @@ from application.interfaces.repositories import UserRepository
 
 class MongoUserRepository(UserRepository):
     def __init__(self, db_name: str, db_uri: str):
-        # self._col = client[db_name]["users"]
         me.connect(db_name, host=db_uri)
 
     def save(self, user: User) -> Optional[User]:
-        """
-        Save a User to the MongoDB collection.
-        If the user already exists, it will be updated.
-        """
         try:
             user_dict = {
                 "username": user.username,
@@ -62,6 +57,49 @@ class MongoUserRepository(UserRepository):
             return self._doc_to_entity(user_doc)
         except me.DoesNotExist:
             logging.warning(f"User with username {username} not found.")
+            return None
+
+    def find_all(self) -> List[User]:
+        try:
+            user_docs = UserDocument.objects.all()
+            return [self._doc_to_entity(doc) for doc in user_docs]
+        except Exception as e:
+            logging.error(f"Error retrieving all users: {e}")
+            return []
+
+    def delete_by_id(self, user_id: UUID) -> bool:
+        try:
+            user_doc = UserDocument.objects.get(id=str(user_id))
+            user_doc.delete()
+            logging.info(f"User with ID {user_id} deleted successfully.")
+            return True
+        except me.DoesNotExist:
+            logging.warning(f"User with ID {user_id} not found.")
+            return False
+        except Exception as e:
+            logging.error(f"Error deleting user {user_id}: {e}")
+            return False
+
+    def update(self, user: User) -> Optional[User]:
+        try:
+            user_dict = {
+                "username": user.username,
+                "email": user.email,
+                "password": user.password,
+                "full_name": user.full_name,
+                "birthdate": user.birthdate,
+                "gender": user.gender.value,
+                "role": user.role.value
+            }
+
+            UserDocument.objects(id=str(user.id)).update_one(**user_dict)
+            updated_doc = UserDocument.objects.get(id=str(user.id))
+            return self._doc_to_entity(updated_doc)
+        except me.DoesNotExist:
+            logging.warning(f"User with ID {user.id} not found for update.")
+            return None
+        except Exception as e:
+            logging.error(f"Error updating user {user.id}: {e}")
             return None
 
     @staticmethod

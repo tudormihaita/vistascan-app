@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from api.rest.routes.auth import router as auth_router
+from api.rest.routes.admin import router as admin_router
 from api.rest.routes.consultation import router as consultation_router
 from .logger import LogLevels, configure_logging
 from config import settings
@@ -21,8 +22,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# TODO: add exception and event handlers
+
 app.include_router(auth_router)
+app.include_router(admin_router)
 app.include_router(consultation_router)
 
 @app.get("/healthcheck")

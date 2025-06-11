@@ -17,6 +17,16 @@ export const consultationApi = apiSlice.injectEndpoints({
             query: (consultationId) => `/consultations/${consultationId}`,
             providesTags: (_result, _error, id) => [{ type: 'consultationsCache', id }],
         }),
+        getConsultationsByStatus: builder.query<ConsultationDto[], string>({
+            query: (status) => `/consultations?status=${status}`,
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.map(({ id }) => ({ type: 'consultationsCache' as const, id })),
+                        'consultationsCache'
+                      ]
+                    : ['consultationsCache'],
+        }),
         submitConsultation: builder.mutation<ConsultationDto, File>({
             query: (file) => {
                 const formData = new FormData();
@@ -28,13 +38,13 @@ export const consultationApi = apiSlice.injectEndpoints({
                     headers: {}
                 };
             },
-            invalidatesTags: ['consultationsCache'],
+            invalidatesTags: ['consultationsCache', 'allConsultationsCache'],
         }),
         assignConsultation: builder.mutation<ConsultationDto, AssignConsultationRequestDto>({
-            query: ({ consultation_id, ...body }) => ({
-                url: `/consultations/${consultation_id}/assign`,
+            query: (request ) => ({
+                url: `/consultations/${request.consultation_id}/assign`,
                 method: 'POST',
-                body
+                body: request
             }),
             invalidatesTags: (_result, _error, { consultation_id }) => [
                 { type: 'consultationsCache', id: consultation_id },
@@ -42,14 +52,15 @@ export const consultationApi = apiSlice.injectEndpoints({
             ],
         }),
         submitReport: builder.mutation<ConsultationDto, SubmitReportRequestDto>({
-            query: ({ consultation_id, ...body }) => ({
-                url: `/consultations/${consultation_id}/submit`,
+            query: (request) => ({
+                url: `/consultations/${request.consultation_id}/submit`,
                 method: 'POST',
-                body
+                body: request
             }),
             invalidatesTags: (_result, _error, { consultation_id }) => [
                 { type: 'consultationsCache', id: consultation_id },
-                'consultationsCache'
+                'consultationsCache',
+                'allConsultationsCache'
             ],
         }),
         generateDraftReport: builder.mutation<ConsultationDto, string>({
@@ -71,6 +82,7 @@ export const consultationApi = apiSlice.injectEndpoints({
 export const {
     useGetConsultationsByUserIdQuery,
     useGetConsultationByIdQuery,
+    useGetConsultationsByStatusQuery,
     useSubmitConsultationMutation,
     useAssignConsultationMutation,
     useSubmitReportMutation,

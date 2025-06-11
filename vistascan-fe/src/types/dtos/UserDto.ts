@@ -18,3 +18,13 @@ export interface UserDto {
     gender: Gender;
     role: UserRole;
 }
+
+export interface UpdateUserRequestDto {
+    username?: string;
+    email?: string;
+    full_name?: string;
+    birthdate?: string;
+    gender?: string;
+    role?: string;
+    password?: string;
+}

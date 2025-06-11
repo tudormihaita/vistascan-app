@@ -27,12 +27,32 @@ class UserRepository(ABC):
         """Find a User by its username."""
         ...
 
+    @abstractmethod
+    def find_all(self) -> List[User]:
+        """Find all Users."""
+        ...
+
+    @abstractmethod
+    def delete_by_id(self, user_id: UUID) -> bool:
+        """Delete a User by its ID."""
+        ...
+
+    @abstractmethod
+    def update(self, user: User) -> Optional[User]:
+        """Update an existing User."""
+        ...
+
 
 class ConsultationRepository(ABC):
     """Repository interface for CRUD operations on Consultation entities."""
     @abstractmethod
     def save(self, consultation: Consultation) -> Optional[Consultation]:
         """Persist a Consultation (new or updated)."""
+        ...
+
+    @abstractmethod
+    def delete_by_id(self, consultation_id: UUID) -> bool:
+        """Delete a Consultation by its ID."""
         ...
 
     @abstractmethod
@@ -53,4 +73,9 @@ class ConsultationRepository(ABC):
     @abstractmethod
     def find_by_status(self, status: ConsultationStatus) -> List[Consultation]:
         """Find all consultations with a specific status."""
+        ...
+
+    @abstractmethod
+    def find_all(self) -> List[Consultation]:
+        """Find all Consultations."""
         ...

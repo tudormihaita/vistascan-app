@@ -4,5 +4,5 @@ import {createApi} from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
     baseQuery: baseQueryWithReauth,
     endpoints: () => ({}),
-    tagTypes: ['consultationsCache']
+    tagTypes: ['consultationsCache', 'allConsultationsCache', 'usersCache']
 });

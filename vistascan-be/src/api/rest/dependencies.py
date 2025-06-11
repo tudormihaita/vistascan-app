@@ -4,10 +4,12 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
+from application.services.admin_service import AdminService
 from config import settings
 from domain.entities.user import User
 
-from application.interfaces.services import UserAuthenticationUseCase, ManageConsultationsUseCase
+from application.interfaces.services import UserAuthenticationUseCase, ManageConsultationsUseCase, \
+    AdminManagementUseCase
 from application.interfaces.storage import FileStorageService
 from application.interfaces.repositories import UserRepository, ConsultationRepository
 from application.services.auth_service import AuthService
@@ -27,6 +29,7 @@ _user_repository: Optional[UserRepository] = None
 _consultation_repository: Optional[ConsultationRepository] = None
 _auth_service: Optional[UserAuthenticationUseCase] = None
 _consultation_service: Optional[ManageConsultationsUseCase] = None
+_admin_service: Optional[AdminManagementUseCase] = None
 _file_storage_service: Optional[FileStorageService] = None
 _model_service_client: Optional[ModelServiceClient] = None
 
@@ -115,6 +118,20 @@ def get_consultation_service() -> ConsultationService:
 
     return _consultation_service
 
+def get_admin_service() -> AdminService:
+    global _admin_service
+    if _admin_service is None:
+        _user_repo = get_user_repository()
+        _consultation_repo = get_consultation_repository()
+
+        _admin_service = AdminService(
+            user_repository=_user_repo,
+            consultation_repository=_consultation_repo,
+            password_hasher=_password_hasher,
+            file_storage_service=get_file_storage_service(),
+        )
+
+    return _admin_service
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     credentials_exception = HTTPException(

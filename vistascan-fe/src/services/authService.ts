@@ -34,8 +34,8 @@ export const baseQueryWithReauth: BaseQueryFnResult = async (
     if (result.error && result.error.status === 401) {
         clearAuthenticationData();
 
-        if (!window.location.pathname.includes(AppRoutes.LOGIN_PAGE)) {
-            window.location.href = AppRoutes.LOGIN_PAGE;
+        if (!window.location.pathname.includes(AppRoutes.LOGIN)) {
+            window.location.href = AppRoutes.LOGIN;
         }
     }
 

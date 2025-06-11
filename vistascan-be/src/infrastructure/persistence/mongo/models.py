@@ -1,7 +1,8 @@
 import mongoengine as me
 
-from domain.entities.user import Gender
+from domain.entities.user import Gender, UserRole
 from domain.entities.consultation import ConsultationStatus
+
 
 class UserDocument(me.Document):
     """MongoDB document model for User."""
@@ -12,7 +13,7 @@ class UserDocument(me.Document):
     full_name = me.StringField(required=True)
     birthdate = me.DateField(required=True)
     gender = me.StringField(required=True, choices=[g.value for g in Gender])
-    role = me.StringField(required=True, choices=[r.value for r in Gender])
+    role = me.StringField(required=True, choices=[r.value for r in UserRole])
 
     meta = {
         'collection': 'users',

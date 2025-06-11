@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Optional
 from uuid import UUID
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status, Query
 
+from domain.entities.consultation import ConsultationStatus
 from domain.entities.user import User, UserRole
 from application.dto.consultation_dto import (
     CreateConsultationRequest,
@@ -14,7 +15,6 @@ from application.interfaces.services import ManageConsultationsUseCase
 from api.rest.dependencies import (
     get_consultation_service,
     get_current_user,
-    get_file_storage_service,
 )
 
 router = APIRouter(prefix="/consultations", tags=["consultations"])
@@ -60,28 +60,57 @@ async def get_consultation(
 
     return result
 
-
 @router.get("", response_model=List[ConsultationDTO], status_code=status.HTTP_200_OK)
-async def get_consultations_by_user(
-        user_id: UUID,
+async def get_filtered_consultations(
+        user_id: Optional[UUID] = Query(None, description="Filter by user ID"),
+        consultation_status: Optional[str] = Query(None, description="Filter by consultation status", alias="status"),
         current_user: User = Depends(get_current_user),
         use_case: ManageConsultationsUseCase = Depends(get_consultation_service)
 ):
-    if current_user.id != user_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail="You do not have permission to access this patient's consultations")
+    if not user_id and not consultation_status:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="At least one filter (user_id or status) must be provided"
+        )
 
-    if current_user.role == UserRole.PATIENT or current_user.role == UserRole.ADMIN:
-        result = use_case.get_by_patient_id(user_id)
-    elif current_user.role == UserRole.EXPERT:
-        result = use_case.get_by_expert_id(user_id)
-    else:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail="Unauthorized access to consultations")
+    if consultation_status:
+        try:
+            consultation_status = ConsultationStatus(consultation_status.upper())
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid status: {consultation_status}. Valid statuses are: PENDING, IN_REVIEW, COMPLETED"
+            )
 
-    if not result:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="No consultations found for this user")
+    if consultation_status and not user_id:
+        if current_user.role not in [UserRole.EXPERT, UserRole.ADMIN]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Only experts and admins can filter consultations by status"
+            )
+
+    if user_id and current_user.role != UserRole.ADMIN:
+        if current_user.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to access this user's consultations"
+            )
+
+    result = []
+    if user_id:
+        if current_user.role == UserRole.ADMIN:
+            result += use_case.get_by_patient_id(user_id) or []
+            result += use_case.get_by_expert_id(user_id) or []
+        elif current_user.role == UserRole.PATIENT:
+            result = use_case.get_by_patient_id(user_id) or []
+        elif current_user.role == UserRole.EXPERT:
+            result = use_case.get_by_expert_id(user_id) or []
+
+    if consultation_status:
+        if not result:
+            result = use_case.get_by_status(consultation_status)
+        else:
+            result = [c for c in result if c.status == consultation_status]
 
     return result
 
@@ -96,8 +125,8 @@ async def download_study(
     if not result:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Consultation not found")
 
-    if (current_user.role != UserRole.ADMIN and
-        current_user.id != result.patient_id):
+    if (current_user.role not in [UserRole.ADMIN, UserRole.EXPERT] and
+            current_user.id != result.patient_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to download this file"
@@ -109,7 +138,7 @@ async def download_study(
             detail="Download URL not found"
         )
 
-    return { "download_url": result.download_url }
+    return {"download_url": result.download_url}
 
 
 @router.post("/{consultation_id}/assign", response_model=ConsultationDTO, status_code=status.HTTP_200_OK)
@@ -155,8 +184,8 @@ async def generate_ai_report(
     """
     Generate an AI report for a consultation
     """
-    if current_user.role != UserRole.EXPERT and current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only experts can generate AI reports")
+    if current_user.role not in [UserRole.EXPERT, UserRole.ADMIN]:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only experts and admins can generate AI reports")
 
     try:
         result = await use_case.generate_draft_report(consultation_id, current_user.id)

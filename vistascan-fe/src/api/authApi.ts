@@ -52,10 +52,18 @@ export const authApi = apiSlice.injectEndpoints({
                 }
             }
         }),
+          createUserByAdmin: builder.mutation<AuthDto, RegisterDataDto>({
+            query: (registerData) => ({
+                url: '/auth/register',
+                method: 'POST',
+                body: registerData
+            }),
+        }),
     }),
 });
 
 export const {
     useLoginUserMutation,
     useRegisterUserMutation,
+    useCreateUserByAdminMutation
 } = authApi;

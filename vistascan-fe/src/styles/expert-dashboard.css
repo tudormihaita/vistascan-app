@@ -1,0 +1,41 @@
+.expert-dashboard-title {
+  margin-bottom: 24px;
+}
+
+.expert-stats-row {
+  margin-bottom: 24px;
+}
+
+.expert-stats-col {
+  margin-bottom: 16px;
+}
+
+.expert-alert {
+  margin-bottom: 24px;
+}
+
+.expert-tabs {
+  width: 100%;
+}
+
+.expert-stat-available {
+  color: #faad14;
+}
+
+.expert-stat-in-review {
+  color: #1890ff;
+}
+
+.expert-stat-completed {
+  color: #52c41a;
+}
+
+@media (max-width: 768px) {
+  .expert-stats-col {
+    margin-bottom: 12px;
+  }
+
+  .expert-dashboard-title {
+    font-size: 20px;
+  }
+}

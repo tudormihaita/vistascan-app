@@ -13,7 +13,7 @@ import {
 import ExpertDashboard from "../components/dashboard/ExpertDashboard.tsx";
 import AdminDashboard from "../components/dashboard/AdminDashboard.tsx";
 import PatientDashboard from "../components/dashboard/PatientDashboard.tsx";
-import '../styles/DashboardLayout.css';
+import '../styles/dashboard-layout.css';
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;

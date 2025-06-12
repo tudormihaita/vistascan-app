@@ -1,0 +1,131 @@
+.consultation-list-title {
+  margin-bottom: 16px;
+}
+
+.consultation-list-file-name {
+  font-weight: 500;
+}
+
+.consultation-list-file-size {
+  font-size: 12px;
+}
+
+.consultation-list-id-text {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.consultation-list-expert-tag {
+  margin-left: 4px;
+}
+
+.consultation-list-actions-vertical {
+  flex-direction: column;
+}
+
+.consultation-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.consultation-modal-descriptions {
+  margin-bottom: 16px;
+}
+
+.consultation-modal-report-card {
+  background-color: #f8f9fa;
+}
+
+.consultation-modal-report-content {
+  white-space: pre-line;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.consultation-modal-report-divider {
+  margin: 12px 0;
+}
+
+.consultation-modal-report-date {
+  font-size: 12px;
+}
+
+.consultation-modal-image-title {
+  margin-bottom: 16px;
+}
+
+.consultation-modal-image-center {
+  text-align: center;
+}
+
+.consultation-modal-image {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+}
+
+.consultation-modal-image-placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.consultation-modal-image-loading {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #fafafa;
+  border-radius: 8px;
+}
+
+.consultation-modal-image-loading-text {
+  margin-top: 16px;
+}
+
+.consultation-modal-image-not-available {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 60px 20px;
+  text-align: center;
+  border: 1px solid #d9d9d9;
+}
+
+.consultation-modal-download-button {
+  margin-top: 12px;
+}
+
+.consultation-delete-confirm-warning {
+  color: #ff4d4f;
+  font-size: 12px;
+}
+
+.consultation-delete-confirm-list {
+  font-size: 12px;
+  color: #ff4d4f;
+  margin: 4px 0;
+}
+
+.consultation-delete-confirm-note {
+  font-size: 12px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .consultation-modal-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .consultation-modal-image-placeholder,
+  .consultation-modal-image-loading {
+    padding: 40px 15px;
+  }
+
+  .consultation-list-actions-space {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

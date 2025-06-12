@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Card, Col, Row, Typography, Space, Statistic } from 'antd';
+import {Alert, Card, Col, Row, Typography, Space, Statistic} from 'antd';
 import {
     ClockCircleOutlined,
     CheckCircleOutlined,
@@ -9,6 +9,7 @@ import ConsultationList from "../consultation/ConsultationList";
 import PatientStudyUpload from "../consultation/PatientStudyUpload";
 import {ConsultationStatus} from "../../types/dtos/ConsultationDto.ts";
 import {UserRole} from "../../types/dtos/UserDto.ts";
+import '../../styles/patient-dashboard.css';
 
 const { Title, Text } = Typography;
 
@@ -30,25 +31,24 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
     const hasActiveConsultations = activeConsultations > 0;
 
     return (
-        <div style={{ padding: '0 16px' }}>
-            <div style={{ marginBottom: 32 }}>
-                <Title level={2} style={{ marginBottom: 8 }}>
+        <div className="patient-dashboard">
+            <div className="patient-dashboard-header">
+                <Title level={2} className="patient-dashboard-title">
                     Welcome to Your Medical Portal
                 </Title>
-                <Text type="secondary" style={{ fontSize: '16px' }}>
+                <Text type="secondary" className="patient-dashboard-subtitle">
                     Upload imaging studies and track your consultation progress
                 </Text>
             </div>
 
-            <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+            <Row gutter={[16, 16]} className="patient-stats-row">
                 <Col xs={24} sm={12}>
-                    <Card size="small" style={{ textAlign: 'center' }}>
-                        <Space direction="vertical" size="small">
+                    <Card size="small" className="patient-stats-card">
+                        <Space direction="vertical" size="small" className="patient-stats-space">
                             <ClockCircleOutlined
-                                style={{
-                                    fontSize: 24,
-                                    color: hasActiveConsultations ? '#1890ff' : '#d9d9d9'
-                                }}
+                                className={`patient-stats-icon ${
+                                    hasActiveConsultations ? 'patient-stats-icon-active' : 'patient-stats-icon-inactive'
+                                }`}
                             />
                             <Statistic
                                 title="Active Reviews"
@@ -58,7 +58,7 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
                                     fontSize: '20px'
                                 }}
                             />
-                            <Text type="secondary" style={{ fontSize: '12px' }}>
+                            <Text type="secondary" className="patient-stats-text">
                                 {hasActiveConsultations
                                     ? 'Studies being reviewed'
                                     : 'No pending reviews'
@@ -68,13 +68,12 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12}>
-                    <Card size="small" style={{ textAlign: 'center' }}>
-                        <Space direction="vertical" size="small">
+                    <Card size="small" className="patient-stats-card">
+                        <Space direction="vertical" size="small" className="patient-stats-space">
                             <CheckCircleOutlined
-                                style={{
-                                    fontSize: 24,
-                                    color: completedConsultations > 0 ? '#52c41a' : '#d9d9d9'
-                                }}
+                                className={`patient-stats-icon ${
+                                    completedConsultations > 0 ? 'patient-stats-icon-completed' : 'patient-stats-icon-inactive'
+                                }`}
                             />
                             <Statistic
                                 title="Completed"
@@ -84,7 +83,7 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
                                     fontSize: '20px'
                                 }}
                             />
-                            <Text type="secondary" style={{ fontSize: '12px' }}>
+                            <Text type="secondary" className="patient-stats-text">
                                 {completedConsultations > 0
                                     ? 'Reports available'
                                     : 'No completed studies'
@@ -98,10 +97,10 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
             {hasActiveConsultations ? (
                 <Alert
                     message="Your studies are being reviewed"
-                    description={`You have ${activeConsultations} study${activeConsultations > 1 ? 'ies' : ''} currently under medical review. You'll be notified when the report${activeConsultations > 1 ? 's are' : ' is'} ready.`}
+                    description={`You have ${activeConsultations} stud${activeConsultations > 1 ? 'ies' : 'y'} currently under medical review. You'll be notified when the report${activeConsultations > 1 ? 's are' : ' is'} ready.`}
                     type="info"
                     showIcon
-                    style={{ marginBottom: 24 }}
+                    className="patient-alert"
                 />
             ) : consultations.length === 0 ? (
                 <Alert
@@ -109,7 +108,7 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
                     description="Upload your medical imaging studies below and our expert radiologists will provide detailed reports. Supported formats include DICOM, JPEG, PNG, and more."
                     type="success"
                     showIcon
-                    style={{ marginBottom: 24 }}
+                    className="patient-alert"
                 />
             ) : (
                 <Alert
@@ -117,24 +116,24 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
                     description="All your previous studies have been completed. Upload a new study below for additional consultation."
                     type="success"
                     showIcon
-                    style={{ marginBottom: 24 }}
+                    className="patient-alert"
                 />
             )}
 
             <Card
                 title="Start a New Consultation"
-                style={{ marginBottom: 24 }}
+                className="patient-upload-card"
             >
                    <Row gutter={16}>
-                    <Col xs={24} lg={12}>
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         <PatientStudyUpload />
                     </Col>
-                    <Col xs={24} lg={12}>
-                        <Card title="Upload Guidelines" style={{ height: '100%' }}>
+                    <Col xs={24} sm={12} md={12} lg={12}>
+                        <Card title="Upload Guidelines" className="patient-upload-guidelines">
                             <Alert
                                 message="File Upload Instructions"
                                 description={
-                                    <div>
+                                    <div className="patient-guidelines-content">
                                         <p>• Supported formats: PNG, JPG</p>
                                         <p>• Maximum file size: 10MB</p>
                                         <p>• Files will be processed automatically</p>
@@ -153,7 +152,7 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
                 title="Previous Studies"
                 extra={
                     consultations.length > 0 && (
-                        <Text type="secondary">
+                        <Text type="secondary" className="patient-studies-card-extra">
                             {consultations.length} total consultation{consultations.length !== 1 ? 's' : ''}
                         </Text>
                     )

@@ -14,6 +14,8 @@ from application.interfaces.services import ManageConsultationsUseCase
 from application.interfaces.repositories import ConsultationRepository, UserRepository
 from application.interfaces.storage import FileStorageService
 from application.interfaces.model_client import ModelClient
+from application.interfaces.event_handler import EventHandler
+
 
 class ConsultationService(ManageConsultationsUseCase):
     def __init__(
@@ -21,14 +23,17 @@ class ConsultationService(ManageConsultationsUseCase):
             consultation_repository: ConsultationRepository,
             user_repository: UserRepository,
             file_storage_service: FileStorageService,
+            websocket_manager: EventHandler,
             model_client: ModelClient
     ):
         self._repo = consultation_repository
         self._user_repo = user_repository
         self._storage = file_storage_service
+
+        self._websocket_manager = websocket_manager
         self._model_service = model_client
 
-    def create(self, consultation_dto: CreateConsultationRequest) -> Optional[ConsultationDTO]:
+    async def create(self, consultation_dto: CreateConsultationRequest) -> Optional[ConsultationDTO]:
         patient = self._user_repo.find_by_id(consultation_dto.patient_id)
         if not patient:
             logging.error(f"Patient with ID {consultation_dto.patient_id} not found.")
@@ -72,6 +77,10 @@ class ConsultationService(ManageConsultationsUseCase):
             return None
 
         logging.info(f"Saved consultation successfully: {saved_consultation.id}")
+        await self._websocket_manager.notify_consultation_created(
+            str(saved_consultation.id),
+            str(consultation_dto.patient_id)
+        )
 
         download_url = self._storage.get_download_url(file_path)
         imaging_study_dto = ImagingStudyDTO(
@@ -91,7 +100,7 @@ class ConsultationService(ManageConsultationsUseCase):
             download_url=download_url,
         )
 
-    def assign(self, dto: AssignConsultationRequest) -> Optional[ConsultationDTO]:
+    async def assign(self, dto: AssignConsultationRequest) -> Optional[ConsultationDTO]:
         consultation = self._repo.find_by_id(dto.consultation_id)
         if not consultation:
             logging.error(f"Consultation with ID {dto.consultation_id} not found.")
@@ -108,13 +117,17 @@ class ConsultationService(ManageConsultationsUseCase):
 
         try:
             consultation.assign_to_expert(dto.expert_id)
-
             updated_consultation = self._repo.save(consultation)
             if not updated_consultation:
                 logging.error("Failed to update consultation.")
                 return None
 
             logging.info(f"Consultation assigned successfully: {updated_consultation.id}")
+            await self._websocket_manager.notify_consultation_assigned(
+                str(dto.consultation_id),
+                str(consultation.patient_id),
+                str(dto.expert_id)
+            )
 
             imaging_study = updated_consultation.imaging_study
             download_url = self._storage.get_download_url(imaging_study.file_path)
@@ -152,7 +165,7 @@ class ConsultationService(ManageConsultationsUseCase):
             logging.error(f"Error assigning consultation: {e}")
             return None
 
-    def annotate(self, dto: SubmitReportRequest) -> Optional[ConsultationDTO]:
+    async def annotate(self, dto: SubmitReportRequest) -> Optional[ConsultationDTO]:
         consultation = self._repo.find_by_id(dto.consultation_id)
         if not consultation:
             logging.error(f"Consultation with ID {dto.consultation_id} not found.")
@@ -178,6 +191,11 @@ class ConsultationService(ManageConsultationsUseCase):
                 return None
 
             logging.info(f"Consultation annotated successfully: {updated_consultation.id}")
+            await self._websocket_manager.notify_consultation_completed(
+                str(dto.consultation_id),
+                str(consultation.patient_id),
+                str(dto.expert_id)
+            )
 
             imaging_study = updated_consultation.imaging_study
             download_url = self._storage.get_download_url(imaging_study.file_path)
@@ -381,9 +399,6 @@ class ConsultationService(ManageConsultationsUseCase):
             return []
 
     async def generate_draft_report(self, consultation_id: UUID, user_id: UUID) -> Optional[ConsultationDTO]:
-        """
-        Generate a draft automated report for a consultation using the integrated AI model.
-        """
         consultation = self._repo.find_by_id(consultation_id)
         if not consultation:
             logging.error(f"Consultation with ID {consultation_id} not found.")

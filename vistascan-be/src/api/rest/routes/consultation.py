@@ -37,7 +37,7 @@ async def create_consultation(
         content_type=file.content_type or "application/octet-stream",
     )
 
-    result = use_case.create(dto)
+    result = await use_case.create(dto)
     if not result:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create consultation")
 
@@ -151,7 +151,7 @@ async def assign_consultation(
     if current_user.role != UserRole.ADMIN and current_user.role != UserRole.EXPERT and current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized to review consultations")
 
-    result = use_case.assign(request)
+    result = await use_case.assign(request)
     if not result:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to assign consultation")
 
@@ -168,7 +168,7 @@ async def submit_report(
     if current_user.role != UserRole.EXPERT and current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only experts can submit reports")
 
-    result = use_case.annotate(request)
+    result = await use_case.annotate(request)
     if not result:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to submit report")
 

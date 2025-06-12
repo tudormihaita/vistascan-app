@@ -13,6 +13,7 @@ import ConsultationList from "../consultation/ConsultationList";
 import ConsultationManager from "../consultation/ConsultationManager";
 import {ConsultationStatus} from "../../types/dtos/ConsultationDto.ts";
 import {UserRole} from "../../types/dtos/UserDto.ts";
+import '../../styles/expert-dashboard.css';
 
 const { Title } = Typography;
 
@@ -130,30 +131,10 @@ const ExpertDashboard = (props: ExpertDashboardProps) => {
 
     return (
         <>
-            <Title level={3} style={{ marginBottom: '24px' }}>Expert Dashboard</Title>
+            <Title level={3} className="expert-dashboard-title">Expert Dashboard</Title>
 
-            <Row gutter={16} style={{ marginBottom: '24px' }}>
-                <Col xs={24} sm={12} md={6} style={{ marginBottom: '16px' }}>
-                    <Card>
-                        <Statistic
-                            title="Available to Assign"
-                            value={pendingConsultations.length}
-                            valueStyle={{ color: '#faad14' }}
-                            prefix={<AreaChartOutlined />}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={24} sm={12} md={6} style={{ marginBottom: '16px' }}>
-                    <Card>
-                        <Statistic
-                            title="In Review"
-                            value={myInReviewConsultations.length}
-                            valueStyle={{ color: '#1890ff' }}
-                            prefix={<MedicineBoxOutlined />}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={24} sm={12} md={6} style={{ marginBottom: '16px' }}>
+            <Row gutter={16} className="expert-stats-row">
+                <Col xs={24} sm={12} md={6} className="expert-stats-col">
                     <Card>
                         <Statistic
                             title="Completed"
@@ -163,7 +144,7 @@ const ExpertDashboard = (props: ExpertDashboardProps) => {
                         />
                     </Card>
                 </Col>
-                <Col xs={24} sm={12} md={6} style={{ marginBottom: '16px' }}>
+                <Col xs={24} sm={12} md={6} className="expert-stats-col">
                     <Card>
                         <Statistic
                             title="Total Assigned to me"
@@ -179,12 +160,12 @@ const ExpertDashboard = (props: ExpertDashboardProps) => {
                 description="Review pending consultations, assign cases to yourself, and generate diagnostic reports for patients. You can view all available consultations and manage your assigned cases."
                 type="info"
                 showIcon
-                style={{ marginBottom: '24px' }}
+                className="expert-alert"
             />
 
             <Tabs
                 defaultActiveKey="pending"
-                style={{ width: '100%' }}
+                className="expert-tabs"
                 items={tabItems}
                 size="large"
             />

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Card, Upload, Typography, message, Modal, Button, Space} from 'antd';
 import {InboxOutlined, CloudUploadOutlined, EyeOutlined, UploadOutlined} from '@ant-design/icons';
 import {useSubmitConsultationMutation} from "../../api/consultationApi.ts";
-import '../../styles/PatientStudyUpload.css';
+import '../../styles/patient-study-upload.css';
 
 const {Text} = Typography;
 const {Dragger} = Upload;

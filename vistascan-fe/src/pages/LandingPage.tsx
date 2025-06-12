@@ -13,7 +13,7 @@ import {
 const {Title, Text, Paragraph} = Typography;
 const {Content} = Layout;
 
-const HomePage: React.FC = () => {
+const LandingPage: React.FC = () => {
     const features = [
         {
             icon: <MedicineBoxOutlined style={{fontSize: '24px', color: '#1890ff'}}/>,
@@ -227,4 +227,4 @@ const HomePage: React.FC = () => {
     );
 };
 
-export default HomePage;
+export default LandingPage;

@@ -102,7 +102,7 @@ async def delete_consultation(
             detail="Only admins can delete consultations"
         )
 
-    success = admin_service.delete_consultation(consultation_id)
+    success = await admin_service.delete_consultation(consultation_id)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

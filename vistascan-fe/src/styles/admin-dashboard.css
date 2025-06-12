@@ -1,0 +1,65 @@
+.admin-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.admin-dashboard-title {
+  margin: 0;
+}
+
+.admin-stats-row {
+  margin-bottom: 24px;
+}
+
+.admin-stats-col {
+  margin-bottom: 16px;
+}
+
+.admin-alert {
+  margin-bottom: 24px;
+}
+
+.admin-register-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-register-modal-icon {
+  color: #1890ff;
+}
+
+.admin-register-modal-content {
+  padding: 16px 0;
+}
+
+
+.admin-stat-pending {
+  color: #faad14;
+}
+
+.admin-stat-in-review {
+  color: #1890ff;
+}
+
+.admin-stat-completed {
+  color: #52c41a;
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .admin-dashboard-title {
+    font-size: 20px;
+  }
+
+  .admin-stats-col {
+    margin-bottom: 12px;
+  }
+}

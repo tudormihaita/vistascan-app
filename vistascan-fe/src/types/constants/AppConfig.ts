@@ -1,3 +1,4 @@
 export const AppConfig = {
-    serverUrl: import.meta.env.VITE_SERVER_URL || 'http://localhost:8000',
+    serverUrl: 'http://localhost:8000',
+    wsUrl: 'ws://localhost:8000/ws',
 }

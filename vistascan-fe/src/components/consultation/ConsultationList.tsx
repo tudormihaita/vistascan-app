@@ -27,6 +27,7 @@ import {useConsultationDetail} from '../../hooks/useConsultationDetail.ts';
 import {LocalStorageKeys} from '../../types/enums/LocalStorageKeys.ts';
 import {UserRole} from "../../types/dtos/UserDto.ts";
 import {useDeleteConsultationMutation} from "../../api/adminApi.ts";
+import '../../styles/consultation-list.css';
 
 const {Title, Text, Paragraph} = Typography;
 
@@ -77,7 +78,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
         setSelectedConsultationId(undefined);
     };
 
-      const handleDeleteConsultation = async (consultationId: string) => {
+    const handleDeleteConsultation = async (consultationId: string) => {
         try {
             await deleteConsultation(consultationId).unwrap();
             message.success('Consultation deleted successfully');
@@ -138,8 +139,8 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
             key: 'file_name',
             render: (fileName: string, record: ConsultationDto) => (
                 <div>
-                    <div style={{fontWeight: 500}}>{fileName}</div>
-                    <Text type="secondary" style={{fontSize: '12px'}}>
+                    <div className="consultation-list-file-name">{fileName}</div>
+                    <Text type="secondary" className="consultation-list-file-size">
                         {(record.imaging_study.size / 1024 / 1024).toFixed(1)} MB
                     </Text>
                 </div>
@@ -167,7 +168,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
             key: 'id',
             render: (id: string) => (
                 <Tooltip title={id} placement="top">
-                    <Text code style={{fontSize: '12px', cursor: 'pointer'}}>
+                    <Text code className="consultation-list-id-text">
                         {id?.substring(0, 8)}...
                     </Text>
                 </Tooltip>
@@ -180,7 +181,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
             key: 'patient_id',
             render: (id: string) => (
                 <Tooltip title={id} placement="top">
-                    <Text code style={{fontSize: '12px', cursor: 'pointer'}}>
+                    <Text code className="consultation-list-id-text">
                         {id?.substring(0, 8)}...
                     </Text>
                 </Tooltip>
@@ -197,11 +198,11 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                 return (
                     <span>
                          <Tooltip title={id} placement="top">
-                            <Text code style={{fontSize: '12px', cursor: 'pointer'}}>
+                            <Text code className="consultation-list-id-text">
                                 {id?.substring(0, 8)}...
                             </Text>
                         </Tooltip>
-                        {isCurrentUser && <Tag color="blue" style={{marginLeft: 4}}>You</Tag>}
+                        {isCurrentUser && <Tag color="blue" className="consultation-list-expert-tag">You</Tag>}
                     </span>
                 );
             },
@@ -259,15 +260,15 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                             description={
                                 <div>
                                     <p>Are you sure you want to delete this consultation?</p>
-                                    <p style={{ color: '#ff4d4f', fontSize: '12px' }}>
+                                    <p className="consultation-delete-confirm-warning">
                                         This will permanently delete:
                                     </p>
-                                    <ul style={{ fontSize: '12px', color: '#ff4d4f', margin: '4px 0' }}>
+                                    <ul className="consultation-delete-confirm-list">
                                         <li>The consultation record</li>
                                         <li>The uploaded imaging study</li>
                                         <li>Any associated reports</li>
                                     </ul>
-                                    <p style={{ fontSize: '12px', color: '#666' }}>
+                                    <p className="consultation-delete-confirm-note">
                                         This action cannot be undone.
                                     </p>
                                 </div>
@@ -345,7 +346,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
     return (
         <>
             {title && (
-                <Title level={4} style={{marginBottom: 16}}>
+                <Title level={4} className="consultation-list-title">
                     {title}
                 </Title>
             )}
@@ -387,14 +388,14 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                 loading={isLoadingDetail}
             >
                 {selectedConsultation && (
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px'}}>
+                    <div className="consultation-modal-grid">
                         <div>
                             <Descriptions
                                 title="Consultation Information"
                                 bordered
                                 column={1}
                                 size="small"
-                                style={{marginBottom: 16}}
+                                className="consultation-modal-descriptions"
                             >
                                 {(userRole === UserRole.EXPERT || userRole === UserRole.ADMIN) && (
                                     <Descriptions.Item label="Consultation ID">
@@ -422,7 +423,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                                         <span>
                                             <Text code>{selectedConsultation.expert_id.substring(0, 8)}...</Text>
                                             {selectedConsultation.expert_id === userId && (
-                                                <Tag color="blue" style={{marginLeft: 4}}>You</Tag>
+                                                <Tag color="blue" className="consultation-list-expert-tag">You</Tag>
                                             )}
                                         </span>
                                     </Descriptions.Item>
@@ -434,7 +435,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                                 bordered
                                 column={1}
                                 size="small"
-                                style={{marginBottom: 16}}
+                                className="consultation-modal-descriptions"
                             >
                                 <Descriptions.Item label="File Name">
                                     {selectedConsultation.imaging_study.file_name}
@@ -454,20 +455,13 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                                 <Card
                                     title="Medical Report"
                                     size="small"
-                                    style={{backgroundColor: '#f8f9fa'}}
+                                    className="consultation-modal-report-card"
                                 >
-                                    <Paragraph
-                                        style={{
-                                            whiteSpace: 'pre-line',
-                                            margin: 0,
-                                            maxHeight: '300px',
-                                            overflowY: 'auto'
-                                        }}
-                                    >
+                                    <Paragraph className="consultation-modal-report-content">
                                         {selectedConsultation.report.content}
                                     </Paragraph>
-                                    <Divider style={{margin: '12px 0'}}/>
-                                    <Text type="secondary" style={{fontSize: '12px'}}>
+                                    <Divider className="consultation-modal-report-divider"/>
+                                    <Text type="secondary" className="consultation-modal-report-date">
                                         Report generated: {formatDate(selectedConsultation.report.created_at)}
                                     </Text>
                                 </Card>
@@ -475,7 +469,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                                 <Card
                                     title="Medical Report"
                                     size="small"
-                                    style={{backgroundColor: '#f8f9fa'}}
+                                    className="consultation-modal-report-card"
                                 >
                                     <Text type="secondary">
                                         {selectedConsultation.status === ConsultationStatus.PENDING
@@ -490,34 +484,25 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                         </div>
 
                         <div>
-                            <Title level={5} style={{marginBottom: 16}}>
+                            <Title level={5} className="consultation-modal-image-title">
                                 Imaging Study Preview
                             </Title>
                             {downloadUrl ? (
-                                <div style={{textAlign: 'center'}}>
+                                <div className="consultation-modal-image-center">
                                     <Image
                                         src={downloadUrl}
                                         alt="Medical imaging study"
-                                        style={{
-                                            width: '100%',
-                                            borderRadius: '8px',
-                                            border: '1px solid #d9d9d9'
-                                        }}
+                                        className="consultation-modal-image"
                                         placeholder={
-                                            <div style={{
-                                                textAlign: 'center',
-                                                padding: '60px 20px',
-                                                backgroundColor: '#fafafa',
-                                                borderRadius: '8px'
-                                            }}>
+                                            <div className="consultation-modal-image-loading">
                                                 <Spin size="large"/>
-                                                <div style={{marginTop: 16}}>
+                                                <div className="consultation-modal-image-loading-text">
                                                     <Text type="secondary">Loading image...</Text>
                                                 </div>
                                             </div>
                                         }
                                     />
-                                    <div style={{marginTop: 12}}>
+                                    <div className="consultation-modal-download-button">
                                         <Button
                                             type="link"
                                             icon={<DownloadOutlined/>}
@@ -530,13 +515,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                                     </div>
                                 </div>
                             ) : (
-                                <div style={{
-                                    backgroundColor: '#f5f5f5',
-                                    borderRadius: '8px',
-                                    padding: '60px 20px',
-                                    textAlign: 'center',
-                                    border: '1px solid #d9d9d9'
-                                }}>
+                                <div className="consultation-modal-image-not-available">
                                     <Text type="secondary">Image preview not available</Text>
                                 </div>
                             )}

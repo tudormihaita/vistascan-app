@@ -1,0 +1,106 @@
+.not-found-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  padding: 20px;
+  margin: 0;
+  z-index: 1000;
+}
+
+.not-found-result {
+  max-width: 500px;
+  width: 100%;
+}
+
+.not-found-result .ant-result-title {
+  color: #434343;
+  font-size: 72px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.not-found-result .ant-result-subtitle {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.not-found-result .ant-result-extra {
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.not-found-result .ant-btn {
+  min-width: 100px;
+  height: 40px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.not-found-result .ant-btn-primary {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.not-found-result .ant-btn-primary:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.not-found-result .ant-btn-default:hover {
+  color: #1890ff;
+  border-color: #1890ff;
+}
+
+/* Link styling inside buttons */
+.not-found-result .ant-btn a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.not-found-result .ant-btn a:hover {
+  color: inherit;
+}
+
+@media (max-width: 768px) {
+  .not-found-container {
+    padding: 16px;
+  }
+
+  .not-found-result .ant-result-title {
+    font-size: 48px;
+  }
+
+  .not-found-result .ant-result-subtitle {
+    font-size: 14px;
+  }
+
+  .not-found-result .ant-result-extra {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .not-found-result .ant-btn {
+    width: 100%;
+    max-width: 200px;
+    margin: 4px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .not-found-result .ant-result-title {
+    font-size: 36px;
+  }
+
+  .not-found-result .ant-result-subtitle {
+    font-size: 13px;
+    padding: 0 8px;
+  }
+}

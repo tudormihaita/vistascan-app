@@ -1,29 +1,38 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import LoginForm from '../components/auth/LoginForm';
+import { Result, Button } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import { HomeOutlined, LoginOutlined } from '@ant-design/icons';
+import { AppRoutes } from '../types/constants/AppRoutes';
+import '../styles/not-found-page.css';
 
-const LoginPage: React.FC = () => {
+const NotFoundPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary">VistaScan</h1>
-          <p className="text-gray-600 mt-2">Remote Consultation Platform</p>
-        </div>
-
-        <LoginForm />
-
-        <div className="text-center mt-6">
-          <p className="text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-primary hover:underline">
-              Register
-            </Link>
-          </p>
-        </div>
-      </div>
+    <div className="not-found-container">
+      <Result
+        className="not-found-result"
+        status="404"
+        title="404"
+        subTitle="Sorry, the page you visited does not exist."
+        extra={[
+          <Button type="primary" key="home" icon={<HomeOutlined />}>
+            <Link to={AppRoutes.DASHBOARD}>Back Home</Link>
+          </Button>,
+          <Button key="back" onClick={handleGoBack}>
+            Go Back
+          </Button>,
+          <Button key="login" icon={<LoginOutlined />}>
+            <Link to={AppRoutes.LOGIN}>Login</Link>
+          </Button>
+        ]}
+      />
     </div>
   );
 };
 
-export default LoginPage;
+export default NotFoundPage;

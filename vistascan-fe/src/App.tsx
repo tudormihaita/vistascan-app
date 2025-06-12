@@ -9,14 +9,14 @@ import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
 import {AppRoutes} from "./types/constants/AppRoutes.ts";
 import RegisterPage from "./pages/RegisterPage.tsx";
-import HomePage from "./pages/HomePage.tsx";
+import LandingPage from "./pages/LandingPage.tsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
 import {UserRole} from "./types/dtos/UserDto.ts";
 
 const appRouter = createBrowserRouter(
     createRoutesFromElements(
         <>
-            <Route path='/' element={<HomePage />} />
+            <Route path='/' element={<LandingPage />} />
             <Route path={AppRoutes.LOGIN} element={<LoginPage />} />
             <Route path={AppRoutes.REGISTER} element={<RegisterPage />} />
             <Route path={AppRoutes.NOT_FOUND} element={<NotFoundPage />} />

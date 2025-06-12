@@ -3,6 +3,7 @@ import {LocalStorageKeys} from "../../types/enums/LocalStorageKeys.ts";
 import {Navigate, Outlet} from "react-router-dom";
 import {AppRoutes} from "../../types/constants/AppRoutes.ts";
 import {clearAuthenticationData, getDecodedJwtToken} from "../../services/authService.ts";
+import {useWebSocket} from "../../hooks/useWebsocket.ts";
 
 interface ProtectedRouteProps {
     roles: Array<keyof typeof UserRole>;
@@ -15,6 +16,7 @@ const ProtectedRoute = (props: ProtectedRouteProps) => {
     const authToken = getDecodedJwtToken(localStorage.getItem(LocalStorageKeys.USER_TOKEN) || '');
 
     const isAuthenticated = !!userRole && !!userId && !!authToken;
+    useWebSocket();
 
     if (!isAuthenticated) {
         return <Navigate to={AppRoutes.LOGIN} />;

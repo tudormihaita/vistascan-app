@@ -25,6 +25,7 @@ import {useConsultationDetail} from '../../hooks/useConsultationDetail';
 import {LocalStorageKeys} from '../../types/enums/LocalStorageKeys';
 import ConsultationList from './ConsultationList';
 import {UserRole} from "../../types/dtos/UserDto.ts";
+import '../../styles/consultation-manager.css';
 
 const {Title, Text} = Typography;
 const {TextArea} = Input;
@@ -135,7 +136,6 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
         }
     };
 
-
     return (
         <>
             <ConsultationList
@@ -187,7 +187,7 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
                 ]}
                 loading={isLoadingDetail}
             >
-                <div style={{marginBottom: 16}}>
+                <div className="consultation-manager-modal-alert">
                     <Alert
                         message="Write a detailed diagnostic report for this imaging study"
                         description="Review the image carefully and provide your findings. You can use the 'Generate AI Draft' button to get AI assistance, then review and edit before submitting."
@@ -196,8 +196,8 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
                     />
                 </div>
 
-                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px'}}>
-                    <div>
+                <div className="consultation-manager-modal-grid">
+                    <div className="consultation-manager-modal-left">
                         <Form form={form} layout="vertical">
                             <Form.Item
                                 name="report"
@@ -207,16 +207,16 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
                                 <TextArea
                                     rows={20}
                                     placeholder="Enter your findings, impressions, and recommendations..."
-                                    style={{resize: 'none'}}
+                                    className="consultation-manager-textarea"
                                 />
                             </Form.Item>
                         </Form>
                     </div>
 
-                    <div>
-                        <Title level={5}>Imaging Study</Title>
+                    <div className="consultation-manager-modal-right">
+                        <Title level={5} className="consultation-manager-modal-title">Imaging Study</Title>
                         {selectedConsultation && (
-                            <div style={{marginBottom: 16}}>
+                            <div className="consultation-manager-file-info">
                                 <Text strong>File: </Text>
                                 <Text>{selectedConsultation.imaging_study.file_name}</Text>
                                 <br/>
@@ -230,17 +230,19 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
 
                         {downloadUrl ? (
                             <div>
-                                <Image
-                                    src={downloadUrl}
-                                    alt="Imaging study for diagnosis"
-                                    style={{width: '100%', borderRadius: '8px'}}
-                                    placeholder={
-                                        <div style={{textAlign: 'center', padding: '40px'}}>
-                                            <Spin size="large"/>
-                                        </div>
-                                    }
-                                />
-                                <div style={{marginTop: 12, textAlign: 'center'}}>
+                                <div className="consultation-manager-image-container">
+                                    <Image
+                                        src={downloadUrl}
+                                        alt="Imaging study for diagnosis"
+                                        className="consultation-manager-image"
+                                        placeholder={
+                                            <div className="consultation-manager-image-placeholder">
+                                                <Spin size="large"/>
+                                            </div>
+                                        }
+                                    />
+                                </div>
+                                <div className="consultation-manager-download-center">
                                     <Button
                                         type="link"
                                         icon={<DownloadOutlined/>}
@@ -252,12 +254,7 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
                                 </div>
                             </div>
                         ) : (
-                            <div style={{
-                                backgroundColor: '#f5f5f5',
-                                borderRadius: '8px',
-                                padding: '40px',
-                                textAlign: 'center'
-                            }}>
+                            <div className="consultation-manager-image-placeholder">
                                 <Text type="secondary">Loading image...</Text>
                             </div>
                         )}

@@ -3,6 +3,7 @@ from typing import List, Optional
 from uuid import UUID
 from datetime import datetime
 
+from application.interfaces.event_handler import EventHandler
 from application.interfaces.services import AdminManagementUseCase
 from application.interfaces.repositories import UserRepository, ConsultationRepository
 from application.interfaces.security import PasswordHasher
@@ -18,11 +19,13 @@ class AdminService(AdminManagementUseCase):
             user_repository: UserRepository,
             consultation_repository: ConsultationRepository,
             file_storage_service: FileStorageService,
+            websocket_manager: EventHandler,
             password_hasher: PasswordHasher
     ):
         self._user_repo = user_repository
         self._consultation_repo = consultation_repository
         self._storage_service = file_storage_service
+        self._websocket_manager = websocket_manager
         self._password_hasher = password_hasher
 
     def get_all_users(self) -> List[UserDTO]:
@@ -79,7 +82,7 @@ class AdminService(AdminManagementUseCase):
             logging.error(f"Error deleting user {user_id}: {e}")
             return False
 
-    def delete_consultation(self, consultation_id: UUID) -> bool:
+    async def delete_consultation(self, consultation_id: UUID) -> bool:
         try:
             consultation = self._consultation_repo.find_by_id(consultation_id)
             if not consultation:
@@ -89,6 +92,11 @@ class AdminService(AdminManagementUseCase):
             if deleted:
                 self._storage_service.delete(consultation.imaging_study.file_path)
                 logging.info(f"Consultation with ID {consultation_id} and corresponding imaging study deleted.")
+
+                await self._websocket_manager.notify_consultation_deleted(
+                    str(consultation_id),
+                    str(consultation.patient_id),
+                )
             else:
                 logging.warning(f"Failed to delete consultation with ID {consultation_id}, cannot delete imaging study.")
 

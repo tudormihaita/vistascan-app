@@ -15,6 +15,7 @@ import PatientStudyUpload from "../consultation/PatientStudyUpload";
 import ConsultationManager from "../consultation/ConsultationManager";
 import {ConsultationStatus} from "../../types/dtos/ConsultationDto.ts";
 import {UserRole} from "../../types/dtos/UserDto.ts";
+import '../../styles/admin-dashboard.css';
 
 const { Title } = Typography;
 
@@ -84,11 +85,11 @@ const AdminDashboard = () => {
                         <PatientStudyUpload />
                     </Col>
                     <Col xs={24} lg={12}>
-                        <Card title="Upload Guidelines" style={{ height: '100%' }}>
+                        <Card title="Upload Guidelines" className="patient-upload-guidelines">
                             <Alert
                                 message="File Upload Instructions"
                                 description={
-                                    <div>
+                                    <div className="patient-guidelines-content">
                                         <p>• Supported formats: PNG, JPG</p>
                                         <p>• Maximum file size: 10MB</p>
                                         <p>• Files will be processed automatically</p>
@@ -107,13 +108,8 @@ const AdminDashboard = () => {
 
     return (
         <>
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '24px'
-            }}>
-                <Title level={3} style={{ margin: 0 }}>Admin Dashboard</Title>
+            <div className="admin-dashboard-header">
+                <Title level={3} className="admin-dashboard-title">Admin Dashboard</Title>
                 <Button
                     type="primary"
                     icon={<TeamOutlined />}
@@ -124,8 +120,8 @@ const AdminDashboard = () => {
                 </Button>
             </div>
 
-            <Row gutter={16} style={{ marginBottom: '24px' }}>
-                <Col xs={24} sm={12} md={6} style={{ marginBottom: '16px' }}>
+            <Row gutter={16} className="admin-stats-row">
+                <Col xs={24} sm={12} md={6} className="admin-stats-col">
                     <Card>
                         <Statistic
                             title="Total Consultations"
@@ -134,7 +130,7 @@ const AdminDashboard = () => {
                         />
                     </Card>
                 </Col>
-                <Col xs={24} sm={12} md={6} style={{ marginBottom: '16px' }}>
+                <Col xs={24} sm={12} md={6} className="admin-stats-col">
                     <Card>
                         <Statistic
                             title="Pending"
@@ -144,7 +140,7 @@ const AdminDashboard = () => {
                         />
                     </Card>
                 </Col>
-                <Col xs={24} sm={12} md={6} style={{ marginBottom: '16px' }}>
+                <Col xs={24} sm={12} md={6} className="admin-stats-col">
                     <Card>
                         <Statistic
                             title="In Review"
@@ -154,7 +150,7 @@ const AdminDashboard = () => {
                         />
                     </Card>
                 </Col>
-                <Col xs={24} sm={12} md={6} style={{ marginBottom: '16px' }}>
+                <Col xs={24} sm={12} md={6} className="admin-stats-col">
                     <Card>
                         <Statistic
                             title="Completed"
@@ -171,15 +167,15 @@ const AdminDashboard = () => {
                 description="As an administrator, you have full expert capabilities plus administrative oversight. You can assign consultations to yourself, generate AI reports, manage users, and oversee the entire platform."
                 type="info"
                 showIcon
-                style={{ marginBottom: '24px' }}
+                className="admin-alert"
             />
 
             <Tabs defaultActiveKey="consultations" size="large" items={tabItems} />
 
             <Modal
                 title={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <TeamOutlined style={{ color: '#1890ff' }} />
+                    <div className="admin-register-modal-title">
+                        <TeamOutlined className="admin-register-modal-icon" />
                         <span>Register New User</span>
                     </div>
                 }
@@ -189,7 +185,7 @@ const AdminDashboard = () => {
                 width={600}
                 centered
             >
-                <div style={{ padding: '16px 0' }}>
+                <div className="admin-register-modal-content">
                     <RegisterForm
                         isModal={true}
                         showRoleSelect={true}

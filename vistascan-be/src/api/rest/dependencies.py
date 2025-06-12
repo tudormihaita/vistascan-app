@@ -21,6 +21,7 @@ from infrastructure.security.jwt_token_generator import JWTTokenGenerator
 from infrastructure.security.bcrypt_password_hasher import BcryptPasswordHasher
 from infrastructure.persistence.mongo.user_repository import MongoUserRepository
 from infrastructure.model.model_service import ModelServiceClient
+from infrastructure.events.websocket_manager import WebSocketConnectionManager
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -32,12 +33,19 @@ _consultation_service: Optional[ManageConsultationsUseCase] = None
 _admin_service: Optional[AdminManagementUseCase] = None
 _file_storage_service: Optional[FileStorageService] = None
 _model_service_client: Optional[ModelServiceClient] = None
+_websocket_manager: Optional[WebSocketConnectionManager] = None
 
 _password_hasher = BcryptPasswordHasher()
 _token_generator = JWTTokenGenerator(
     secret_key=settings.jwt_secret,
     expires_in=settings.jwt_expiration,
 )
+
+def get_websocket_manager() -> WebSocketConnectionManager:
+    global _websocket_manager
+    if _websocket_manager is None:
+        _websocket_manager = WebSocketConnectionManager()
+    return _websocket_manager
 
 
 def get_user_repository() -> UserRepository:
@@ -108,11 +116,13 @@ def get_consultation_service() -> ConsultationService:
         _consultation_repo = get_consultation_repository()
         _storage_service = get_file_storage_service()
         _model_client = get_model_service_client()
+        _websocket_manager = get_websocket_manager()
 
         _consultation_service = ConsultationService(
             user_repository=_user_repo,
             consultation_repository=_consultation_repo,
             file_storage_service=_storage_service,
+            websocket_manager=_websocket_manager,
             model_client=_model_client,
         )
 
@@ -123,12 +133,14 @@ def get_admin_service() -> AdminService:
     if _admin_service is None:
         _user_repo = get_user_repository()
         _consultation_repo = get_consultation_repository()
+        websocket_manager = get_websocket_manager()
 
         _admin_service = AdminService(
             user_repository=_user_repo,
             consultation_repository=_consultation_repo,
             password_hasher=_password_hasher,
             file_storage_service=get_file_storage_service(),
+            websocket_manager=websocket_manager,
         )
 
     return _admin_service

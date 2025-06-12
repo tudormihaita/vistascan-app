@@ -1,0 +1,116 @@
+.patient-dashboard {
+  padding: 0 16px;
+}
+
+.patient-dashboard-header {
+  margin-bottom: 32px;
+}
+
+.patient-dashboard-title {
+  margin-bottom: 8px;
+}
+
+.patient-dashboard-subtitle {
+  font-size: 16px;
+}
+
+.patient-stats-row {
+  margin-bottom: 24px;
+}
+
+.patient-stats-card {
+  text-align: center;
+}
+
+.patient-stats-space {
+  align-items: center;
+}
+
+.patient-stats-icon {
+  font-size: 24px;
+}
+
+.patient-stats-icon-active {
+  color: #1890ff;
+}
+
+.patient-stats-icon-inactive {
+  color: #d9d9d9;
+}
+
+.patient-stats-icon-completed {
+  color: #52c41a;
+}
+
+.patient-stats-value-active {
+  color: #1890ff;
+  font-size: 20px;
+}
+
+.patient-stats-value-inactive {
+  color: #8c8c8c;
+  font-size: 20px;
+}
+
+.patient-stats-value-completed {
+  color: #52c41a;
+  font-size: 20px;
+}
+
+.patient-stats-text {
+  font-size: 12px;
+}
+
+.patient-alert {
+  margin-bottom: 24px;
+}
+
+.patient-upload-card {
+  margin-bottom: 24px;
+}
+
+.patient-upload-guidelines {
+  height: 100%;
+}
+
+.patient-upload-grid {
+  gap: 16px;
+}
+
+.patient-studies-card-extra {
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.patient-guidelines-content p {
+  margin: 0;
+  padding: 2px 0;
+}
+
+@media (max-width: 768px) {
+  .patient-dashboard {
+    padding: 0 8px;
+  }
+
+  .patient-dashboard-header {
+    margin-bottom: 24px;
+  }
+
+  .patient-dashboard-title {
+    font-size: 20px;
+  }
+
+  .patient-dashboard-subtitle {
+    font-size: 14px;
+  }
+
+  .patient-stats-icon {
+    font-size: 20px;
+  }
+
+  .patient-stats-value-active,
+  .patient-stats-value-inactive,
+  .patient-stats-value-completed {
+    font-size: 18px;
+  }
+}

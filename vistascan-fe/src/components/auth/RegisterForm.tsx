@@ -77,12 +77,10 @@ const RegisterForm: React.FC<RegisterFormProps> = (props: RegisterFormProps) => 
             })
             .catch((err: any) => {
                 if (isModal) {
-                    // In modal mode: use Alert for error display
                     setErrorMessage(err?.data?.message || 'An error occurred during registration. Please try again.');
                     setShowError(true);
-                    setShowSuccess(false); // Hide any previous success
+                    setShowSuccess(false);
                 } else {
-                    // Regular registration: use notification
                     notification.error({
                         message: 'Registration Error',
                         description: err?.data?.message || 'An error occurred during registration. Please try again.',

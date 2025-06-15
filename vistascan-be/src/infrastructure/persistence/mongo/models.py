@@ -5,7 +5,6 @@ from domain.entities.consultation import ConsultationStatus
 
 
 class UserDocument(me.Document):
-    """MongoDB document model for User."""
     id = me.StringField(primary_key=True)
     username = me.StringField(required=True, unique=True)
     email = me.EmailField(required=True, unique=True)

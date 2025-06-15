@@ -1,5 +1,4 @@
-import React from 'react';
-import {Typography, Layout, Row, Col, Button, Card, Space, Divider} from 'antd';
+import {Typography, Layout, Row, Col, Button, Card} from 'antd';
 import {Link} from 'react-router-dom';
 import {
     MedicineBoxOutlined,
@@ -9,104 +8,69 @@ import {
     TeamOutlined,
     SafetyOutlined
 } from '@ant-design/icons';
+import '../styles/langing-page.css';
 
-const {Title, Text, Paragraph} = Typography;
+const {Title, Paragraph} = Typography;
 const {Content} = Layout;
 
-const LandingPage: React.FC = () => {
-    const features = [
+const LandingPage = () => {
+     const features = [
         {
-            icon: <MedicineBoxOutlined style={{fontSize: '24px', color: '#1890ff'}}/>,
-            title: 'Expert Medical Analysis',
-            description: 'Get your medical imaging studies reviewed by certified radiologists and medical experts.'
+            icon: <SafetyOutlined className="feature-icon feature-icon-blue"/>,
+            title: 'Upload Your Imaging Studies',
+            description: 'Upload X-rays or CT scans  directly through the web platform. Supported formats include PNG and JPEG files.'
         },
         {
-            icon: <ClockCircleOutlined style={{fontSize: '24px', color: '#52c41a'}}/>,
-            title: 'Fast Turnaround',
-            description: 'Receive comprehensive reports within 24-48 hours of submission.'
+            icon: <TeamOutlined className="feature-icon feature-icon-green"/>,
+            title: 'Specialist Review',
+            description: 'Expert radiologists review your submitted studies and provide detailed diagnostic reports with their professional assessment.'
         },
         {
-            icon: <SafetyOutlined style={{fontSize: '24px', color: '#faad14'}}/>,
-            title: 'Secure & Confidential',
-            description: 'Your medical data is protected with enterprise-grade security and encryption.'
+            icon: <MedicineBoxOutlined className="feature-icon feature-icon-orange"/>,
+            title: 'AI-Assisted Analysis',
+            description: 'Our integrated AI assistant model generates preliminary reports to support radiologists in their diagnostic process and improve accuracy.'
         },
         {
-            icon: <TeamOutlined style={{fontSize: '24px', color: '#722ed1'}}/>,
-            title: 'Professional Network',
-            description: 'Access to a network of qualified medical professionals and specialists.'
+            icon: <ClockCircleOutlined className="feature-icon feature-icon-purple"/>,
+            title: 'Access Your Consultation History',
+            description: 'View detailed diagnostic reports through your personal dashboard and track the status of all your submitted consultations.'
         }
     ];
 
     return (
-        <Layout style={{
-            minHeight: '100vh',
-            width: '100vw',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-        }}>
-            <Content style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '40px 20px'
-            }}>
-                <div style={{textAlign: 'center', marginBottom: '48px', color: 'white'}}>
-                    <Title level={1} style={{color: 'white', fontSize: '3.5rem', marginBottom: '16px'}}>
-                        VistaScan
+        <Layout className="landing-layout">
+            <Content className="landing-content">
+                <div className="hero-section">
+                    <Title level={1} className="hero-title">
+                        Welcome to VistaScan
                     </Title>
-                    <Title level={3} style={{color: 'rgba(255,255,255,0.9)', fontWeight: 300, marginBottom: '24px'}}>
-                        Remote Medical Consultation Platform
+                    <Title level={3} className="hero-subtitle">
+                        Remote Radiology Consultation Platform
                     </Title>
-                    <Paragraph style={{
-                        fontSize: '18px',
-                        color: 'rgba(255,255,255,0.8)',
-                        maxWidth: '600px',
-                        margin: '0 auto',
-                        lineHeight: '1.6'
-                    }}>
+                    <Paragraph className="hero-description">
                         Connect with medical experts remotely for professional analysis of your imaging studies.
-                        Secure, fast, and reliable medical consultations from the comfort of your home.
+                        Secure, fast, and reliable diagnostic consultations without the burden of scheduled appointments or emergency room visits.
                     </Paragraph>
                 </div>
 
-                <Row gutter={[32, 32]} style={{width: '100%', maxWidth: '800px', marginBottom: '48px'}}>
+                <Row gutter={[32, 32]} className="auth-cards-row">
                     <Col xs={24} sm={12}>
                         <Card
                             hoverable
-                            style={{
-                                height: '280px',
-                                borderRadius: '16px',
-                                border: 'none',
-                                boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
-                            }}
-                            bodyStyle={{
-                                padding: '32px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                textAlign: 'center',
-                                height: '100%'
-                            }}
+                            className="auth-card"
                         >
-                            <LoginOutlined style={{fontSize: '48px', color: '#1890ff', marginBottom: '24px'}}/>
-                            <Title level={3} style={{marginBottom: '16px'}}>
+                            <LoginOutlined className="auth-icon auth-icon-blue"/>
+                            <Title level={3} className="auth-card-title">
                                 Existing User
                             </Title>
-                            <Paragraph style={{color: '#666', marginBottom: '24px'}}>
+                            <Paragraph className="auth-card-description">
                                 Already have an account? Sign in to access your consultations and reports.
                             </Paragraph>
-                            <Link to="/login" style={{width: '100%'}}>
+                            <Link to="/login" className="auth-button-link">
                                 <Button
                                     type="primary"
                                     size="large"
-                                    style={{
-                                        width: '100%',
-                                        height: '48px',
-                                        borderRadius: '8px',
-                                        fontSize: '16px'
-                                    }}
+                                    className="auth-button"
                                 >
                                     Log In
                                 </Button>
@@ -117,43 +81,20 @@ const LandingPage: React.FC = () => {
                     <Col xs={24} sm={12}>
                         <Card
                             hoverable
-                            style={{
-                                height: '280px',
-                                borderRadius: '16px',
-                                border: 'none',
-                                boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
-                            }}
-                            styles={{
-                                body: {
-                                    padding: '32px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    textAlign: 'center',
-                                    height: '100%'
-                                }
-                            }}
+                            className="auth-card"
                         >
-                            <UserAddOutlined style={{fontSize: '48px', color: '#52c41a', marginBottom: '24px'}}/>
-                            <Title level={3} style={{marginBottom: '16px'}}>
+                            <UserAddOutlined className="auth-icon auth-icon-green"/>
+                            <Title level={3} className="auth-card-title">
                                 New User
                             </Title>
-                            <Paragraph style={{color: '#666', marginBottom: '24px'}}>
+                            <Paragraph className="auth-card-description">
                                 Create a new account to start uploading your medical studies and get expert reviews.
                             </Paragraph>
-                            <Link to="/register" style={{width: '100%'}}>
+                            <Link to="/register" className="auth-button-link">
                                 <Button
                                     type="primary"
                                     size="large"
-                                    style={{
-                                        width: '100%',
-                                        height: '48px',
-                                        borderRadius: '8px',
-                                        fontSize: '16px',
-                                        backgroundColor: '#52c41a',
-                                        borderColor: '#52c41a'
-                                    }}
+                                    className="auth-button auth-button-green"
                                 >
                                     Create Account
                                 </Button>
@@ -162,65 +103,28 @@ const LandingPage: React.FC = () => {
                     </Col>
                 </Row>
 
-                <div style={{
-                    background: 'white',
-                    borderRadius: '16px',
-                    padding: '48px 32px',
-                    width: '100%',
-                    maxWidth: '1000px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
-                }}>
-                    <Title level={2} style={{textAlign: 'center', marginBottom: '48px'}}>
-                        Why Choose VistaScan?
+                <div className="features-section">
+                    <Title level={2} className="features-title">
+                        Platform Features
                     </Title>
 
                     <Row gutter={[32, 32]}>
                         {features.map((feature, index) => (
                             <Col xs={24} sm={12} key={index}>
-                                <div style={{textAlign: 'center'}}>
-                                    <div style={{marginBottom: '16px'}}>
+                                <div className="feature-item">
+                                    <div className="feature-icon-wrapper">
                                         {feature.icon}
                                     </div>
-                                    <Title level={4} style={{marginBottom: '12px'}}>
+                                    <Title level={4} className="feature-title">
                                         {feature.title}
                                     </Title>
-                                    <Paragraph style={{color: '#666', lineHeight: '1.6'}}>
+                                    <Paragraph className="feature-description">
                                         {feature.description}
                                     </Paragraph>
                                 </div>
                             </Col>
                         ))}
                     </Row>
-
-                    <Divider/>
-
-                    <div style={{textAlign: 'center'}}>
-                        <Title level={4} style={{marginBottom: '16px'}}>
-                            Ready to get started?
-                        </Title>
-                        <Space size="large">
-                            <Link to="/register">
-                                <Button type="primary" size="large" icon={<UserAddOutlined/>}>
-                                    Create Account
-                                </Button>
-                            </Link>
-                            <Link to="/login">
-                                <Button size="large" icon={<LoginOutlined/>}>
-                                    Sign In
-                                </Button>
-                            </Link>
-                        </Space>
-                    </div>
-                </div>
-
-                <div style={{
-                    marginTop: '48px',
-                    textAlign: 'center',
-                    color: 'rgba(255,255,255,0.7)'
-                }}>
-                    <Text style={{color: 'inherit'}}>
-                        © 2024 VistaScan. Professional medical consultation platform.
-                    </Text>
                 </div>
             </Content>
         </Layout>

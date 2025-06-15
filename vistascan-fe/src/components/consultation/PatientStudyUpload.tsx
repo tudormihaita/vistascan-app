@@ -38,9 +38,9 @@ const PatientStudyUpload: React.FC = () => {
                 return Upload.LIST_IGNORE;
             }
 
-            const isLt50M = file.size / 1024 / 1024 < 50;
+            const isLt50M = file.size / 1024 / 1024 < 500;
             if (!isLt50M) {
-                message.error('File must be smaller than 50MB!');
+                message.error('File must be smaller than 500MB!');
                 return Upload.LIST_IGNORE;
             }
 
@@ -101,7 +101,7 @@ const PatientStudyUpload: React.FC = () => {
                         Click or drag medical images to upload
                     </div>
                     <Text className="patient-study-upload-hint">
-                        Supports JPEG and PNG files only (max 50MB)
+                        Supports JPEG and PNG files only (max 500MB)
                     </Text>
                 </div>
             </Dragger>

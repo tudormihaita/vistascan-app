@@ -140,7 +140,7 @@ class MongoConsultationRepository(ConsultationRepository):
             id=UUID(doc.id),
             patient_id=UUID(doc.patient_id),
             imaging_study=imaging_study,
-            status=doc.status,
+            status=ConsultationStatus(doc.status),
             created_at=doc.created_at,
             report=report,
             expert_id=UUID(doc.expert_id) if doc.expert_id else None,

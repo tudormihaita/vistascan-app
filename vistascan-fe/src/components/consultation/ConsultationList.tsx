@@ -391,7 +391,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                     <div className="consultation-modal-grid">
                         <div>
                             <Descriptions
-                                title="Consultation Information"
+                                title="Summary"
                                 bordered
                                 column={1}
                                 size="small"
@@ -431,7 +431,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                             </Descriptions>
 
                             <Descriptions
-                                title="Imaging Study Details"
+                                title="Imaging Study"
                                 bordered
                                 column={1}
                                 size="small"
@@ -473,9 +473,9 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
                                 >
                                     <Text type="secondary">
                                         {selectedConsultation.status === ConsultationStatus.PENDING
-                                            ? "Your study is waiting to be assigned to a medical expert."
+                                            ? "The study is waiting to be assigned to a medical expert."
                                             : selectedConsultation.status === ConsultationStatus.IN_REVIEW
-                                                ? "Your study is currently being reviewed by a medical expert. The report will be available soon."
+                                                ? "The study is currently being reviewed by a medical expert. The report will be available soon."
                                                 : "No report available for this consultation."
                                         }
                                     </Text>
@@ -485,7 +485,7 @@ const ConsultationList: React.FC<ConsultationListProps> = (props: ConsultationLi
 
                         <div>
                             <Title level={5} className="consultation-modal-image-title">
-                                Imaging Study Preview
+                                Preview
                             </Title>
                             {downloadUrl ? (
                                 <div className="consultation-modal-image-center">

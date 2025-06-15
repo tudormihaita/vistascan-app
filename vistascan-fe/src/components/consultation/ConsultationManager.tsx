@@ -118,11 +118,11 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
         setIsGeneratingReport(true);
 
         try {
-            const updatedConsultation = await generateDraftReport(selectedConsultationId).unwrap();
+            const result = await generateDraftReport(selectedConsultationId).unwrap();
 
-            if (updatedConsultation && updatedConsultation.report) {
+            if (result.success && result.content) {
                 form.setFieldsValue({
-                    report: updatedConsultation.report.content
+                    report: result.content
                 });
 
                 message.success('Draft report generated successfully! You can review and edit it before submitting.');
@@ -151,7 +151,7 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
             />
 
             <Modal
-                title="Write Diagnostic Report"
+                title="Review Study"
                 open={reportModalVisible}
                 onCancel={() => {
                     setReportModalVisible(false);
@@ -189,8 +189,8 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
             >
                 <div className="consultation-manager-modal-alert">
                     <Alert
-                        message="Write a detailed diagnostic report for this imaging study"
-                        description="Review the image carefully and provide your findings. You can use the 'Generate AI Draft' button to get AI assistance, then review and edit before submitting."
+                        message="Provide a comprehensive diagnostic report for this imaging study"
+                        description="Thoroughly analyze the imaging study and document your observations, findings, and recommendations. You may use the 'Generate AI Draft' feature for an initial draft, then review and refine the content before submitting."
                         type="info"
                         showIcon
                     />
@@ -206,7 +206,7 @@ const ConsultationManager: React.FC<ConsultationManagerProps> = (props: Consulta
                             >
                                 <TextArea
                                     rows={20}
-                                    placeholder="Enter your findings, impressions, and recommendations..."
+                                    placeholder="Elaborate your findings, impressions, and recommendations..."
                                     className="consultation-manager-textarea"
                                 />
                             </Form.Item>

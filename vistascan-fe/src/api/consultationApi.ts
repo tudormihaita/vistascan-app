@@ -63,7 +63,7 @@ export const consultationApi = apiSlice.injectEndpoints({
                 'allConsultationsCache'
             ],
         }),
-        generateDraftReport: builder.mutation<ConsultationDto, string>({
+        generateDraftReport: builder.mutation<{success: boolean, content: string, message: string}, string>({
             query: (consultationId) => ({
                 url: `/consultations/${consultationId}/generate-report`,
                 method: 'POST',

@@ -33,12 +33,9 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
     return (
         <div className="patient-dashboard">
             <div className="patient-dashboard-header">
-                <Title level={2} className="patient-dashboard-title">
-                    Welcome to Your Medical Portal
+                <Title level={4} className="patient-dashboard-title">
+                    Patient Dashboard
                 </Title>
-                <Text type="secondary" className="patient-dashboard-subtitle">
-                    Upload imaging studies and track your consultation progress
-                </Text>
             </div>
 
             <Row gutter={[16, 16]} className="patient-stats-row">
@@ -121,7 +118,6 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
             )}
 
             <Card
-                title="Start a New Consultation"
                 className="patient-upload-card"
             >
                    <Row gutter={16}>
@@ -135,7 +131,7 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({ userId }) => {
                                 description={
                                     <div className="patient-guidelines-content">
                                         <p>• Supported formats: PNG, JPG</p>
-                                        <p>• Maximum file size: 10MB</p>
+                                        <p>• Maximum file size: 500MB</p>
                                         <p>• Files will be processed automatically</p>
                                         <p>• A new consultation will be created upon upload</p>
                                     </div>

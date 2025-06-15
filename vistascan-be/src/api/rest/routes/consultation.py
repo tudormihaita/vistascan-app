@@ -175,15 +175,12 @@ async def submit_report(
     return result
 
 
-@router.post("/{consultation_id}/generate-report", response_model=ConsultationDTO, status_code=status.HTTP_200_OK)
-async def generate_ai_report(
+@router.post("/{consultation_id}/generate-report", status_code=status.HTTP_200_OK)
+async def generate_draft_report(
         consultation_id: UUID,
         current_user: User = Depends(get_current_user),
         use_case: ManageConsultationsUseCase = Depends(get_consultation_service)
 ):
-    """
-    Generate an AI report for a consultation
-    """
     if current_user.role not in [UserRole.EXPERT, UserRole.ADMIN]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only experts and admins can generate AI reports")
 
@@ -194,7 +191,11 @@ async def generate_ai_report(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Failed to generate AI report"
             )
-        return result
+        return {
+            "success": True,
+            "content": result["report"],
+            "message": result["message"],
+        }
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

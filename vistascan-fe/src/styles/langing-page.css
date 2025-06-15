@@ -1,0 +1,186 @@
+.landing-layout {
+    min-height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #215ece 0%, #2a5298 30%, #43cea2 100%);
+}
+
+.landing-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.hero-section {
+    text-align: center;
+    margin-bottom: 48px;
+    color: white;
+}
+
+.hero-title {
+    color: white !important;
+    font-size: 3.5rem !important;
+    margin-bottom: 16px !important;
+}
+
+.hero-subtitle {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 300 !important;
+    margin-bottom: 24px !important;
+}
+
+.hero-description {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.auth-cards-row {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 48px;
+}
+
+.auth-card {
+    height: 280px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.auth-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+}
+
+.auth-card .ant-card-body {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+}
+
+.auth-icon {
+    font-size: 48px;
+    margin-bottom: 24px;
+}
+
+.auth-icon-blue {
+    color: #1890ff;
+}
+
+.auth-icon-green {
+    color: #52c41a;
+}
+
+.auth-card-title {
+    margin-bottom: 16px !important;
+}
+
+.auth-card-description {
+    color: #666;
+    margin-bottom: 24px;
+}
+
+.auth-button-link {
+    width: 100%;
+}
+
+.auth-button {
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.auth-button-green {
+    background-color: #52c41a;
+    border-color: #52c41a;
+}
+
+.auth-button-green:hover {
+    background-color: #73d13d;
+    border-color: #73d13d;
+}
+
+/* Features Section */
+.features-section {
+    background: white;
+    border-radius: 16px;
+    padding: 48px 32px;
+    width: 100%;
+    max-width: 1000px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.features-title {
+    text-align: center;
+    margin-bottom: 48px !important;
+}
+
+.feature-item {
+    text-align: center;
+}
+
+.feature-icon-wrapper {
+    margin-bottom: 16px;
+}
+
+.feature-icon {
+    font-size: 24px;
+}
+
+.feature-icon-blue {
+    color: #1890ff;
+}
+
+.feature-icon-green {
+    color: #52c41a;
+}
+
+.feature-icon-orange {
+    color: #faad14;
+}
+
+.feature-icon-purple {
+    color: #722ed1;
+}
+
+.feature-title {
+    margin-bottom: 12px !important;
+}
+
+.feature-description {
+    color: #666;
+    line-height: 1.6;
+}
+
+.cta-section {
+    text-align: center;
+}
+
+.cta-title {
+    margin-bottom: 16px !important;
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem !important;
+    }
+
+    .landing-content {
+        padding: 20px 15px;
+    }
+
+    .features-section {
+        padding: 32px 20px;
+    }
+}

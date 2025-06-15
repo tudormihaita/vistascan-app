@@ -131,7 +131,7 @@ const ExpertDashboard = (props: ExpertDashboardProps) => {
 
     return (
         <>
-            <Title level={3} className="expert-dashboard-title">Expert Dashboard</Title>
+            <Title level={4} className="expert-dashboard-title">Expert Dashboard</Title>
 
             <Row gutter={16} className="expert-stats-row">
                 <Col xs={24} sm={12} md={6} className="expert-stats-col">

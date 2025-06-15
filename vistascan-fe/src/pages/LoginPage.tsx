@@ -12,7 +12,7 @@ const LoginPage: React.FC = () => {
     <Layout className="auth-layout">
       <Content className="auth-content">
         <Row className="auth-row">
-          <Col xs={24} sm={24} md={16} lg={10} xl={8} className="auth-col">
+          <Col xs={22} sm={24} md={16} lg={10} xl={8} className="auth-col">
             <div className="auth-header">
               <Title level={2}>VistaScan</Title>
               <Text type="secondary">Remote Consultation Platform</Text>

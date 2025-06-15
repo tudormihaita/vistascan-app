@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from uuid import UUID
 
 from application.dto.user_dto import (
@@ -66,8 +66,8 @@ class ManageConsultationsUseCase(ABC):
         ...
 
     @abstractmethod
-    def generate_draft_report(self, consultation_id: UUID, user_id: UUID) -> Optional[ConsultationDTO]:
-        """Generate a draft report for a consultation and return the updated consultation details."""
+    def generate_draft_report(self, consultation_id: UUID, user_id: UUID) -> Dict[str, Any]:
+        """Generate a draft report for a consultation and return the report content."""
         ...
 
 class AdminManagementUseCase(ABC):

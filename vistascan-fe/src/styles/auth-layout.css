@@ -22,7 +22,8 @@
 
 .auth-header {
   text-align: center;
-  margin-bottom: 24px;
+  max-width: 600px;
+  margin: 0 auto 24px auto;
 }
 
 .auth-form-container {
@@ -31,6 +32,8 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   padding: 32px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .auth-form-title {

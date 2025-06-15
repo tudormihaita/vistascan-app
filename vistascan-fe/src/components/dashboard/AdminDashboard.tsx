@@ -91,7 +91,7 @@ const AdminDashboard = () => {
                                 description={
                                     <div className="patient-guidelines-content">
                                         <p>• Supported formats: PNG, JPG</p>
-                                        <p>• Maximum file size: 10MB</p>
+                                        <p>• Maximum file size: 500MB</p>
                                         <p>• Files will be processed automatically</p>
                                         <p>• A new consultation will be created upon upload</p>
                                     </div>
@@ -109,7 +109,7 @@ const AdminDashboard = () => {
     return (
         <>
             <div className="admin-dashboard-header">
-                <Title level={3} className="admin-dashboard-title">Admin Dashboard</Title>
+                <Title level={4} className="admin-dashboard-title">Admin Dashboard</Title>
                 <Button
                     type="primary"
                     icon={<TeamOutlined />}
